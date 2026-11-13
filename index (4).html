@@ -1,0 +1,2168 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Appliance Setup Flow</title>
+<style>
+:root {
+  --bg: #f1ece0; --surface: #f8f4ea; --fg: #26334b; --muted: #6b7384; --line: #e0d6c2;
+  --brand: #1f3f6b; --accent: #c4a24a; --turq: #3a8c8b; --good: #1f7a5a; --bad: #a33a2a; --warn: #9a6b12; --chip: #efe7d4;
+  --shadow: 0 1px 2px rgba(19,49,92,.08), 0 8px 22px rgba(19,49,92,.07);
+  --on-brand: #fffdf8; --on-accent: #14213d;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111c2f; --surface: #172640; --fg: #e4dccb; --muted: #a2acbe; --line: #293c5f;
+    --brand: #2f8a88; --accent: #d6b764; --turq: #7fcac8; --good: #5fc39a; --bad: #e88b72; --warn: #f2c46b; --chip: #172a4a;
+    --shadow: 0 1px 2px rgba(0,0,0,.35); --on-brand: #0b1528; --on-accent: #0b1528;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111c2f; --surface: #172640; --fg: #e4dccb; --muted: #a2acbe; --line: #293c5f;
+  --brand: #2f8a88; --accent: #d6b764; --turq: #7fcac8; --good: #5fc39a; --bad: #e88b72; --warn: #f2c46b; --chip: #172a4a;
+  --shadow: 0 1px 2px rgba(0,0,0,.35); --on-brand: #0b1528; --on-accent: #0b1528;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; color: var(--fg);
+  background: var(--bg);
+  font: 15px/1.5 "Calibri", "Carlito", "Helvetica Neue", Arial, sans-serif;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px;
+}
+h1, h2, h3 { font-family: "Cambria", "Georgia", serif; text-wrap: balance; margin: 0; }
+h1 { font-size: 26px; }
+h2 { font-size: 19px; margin-bottom: 6px; }
+h3 { font-size: 16px; }
+.wrap { max-width: 1040px; margin: 0 auto; display: grid; gap: 20px; }
+.lede { color: var(--muted); margin: 4px 0 0; }
+.note { font-size: 12px; color: var(--muted); margin: 10px 0 0; }
+.kicker { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin: 0 0 4px; }
+.brandbar { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--line); margin: 0 -16px 16px; padding: 10px 16px; padding-top: max(10px, env(safe-area-inset-top)); }
+.brandinner { max-width: 1040px; margin: 0 auto; display: flex; align-items: center; gap: 10px; }
+.brandinner img { width: 36px; height: 36px; border-radius: 10px; flex: none; }
+.copyright { max-width: 1040px; margin: 32px auto 0; padding-top: 14px; border-top: 1px solid var(--line); font-size: 12px; color: var(--muted); }
+.copy-inner { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: space-between; }
+.hl-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 2px; }
+.hl { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--brand); background: var(--chip); border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; }
+.authtabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0 6px; }
+.authtab { font-family: inherit; font-weight: 600; font-size: 13px; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--chip); color: var(--muted); cursor: pointer; }
+.authtab[aria-selected="true"] { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
+.authpanel { display: grid; gap: 6px; }
+.codewrap { display: grid; gap: 6px; padding: 12px; border: 1px dashed var(--accent); border-radius: 12px; margin-top: 10px; }
+.inline { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.inline input { flex: 1 1 160px; min-width: 0; }
+.brandinner b { font: 700 22px Cambria, Georgia, serif; letter-spacing: .03em; color: var(--fg); }
+.topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.topbar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.steps { display: flex; gap: 8px; flex-wrap: wrap; }
+.step-pill { display: flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: var(--chip); color: var(--muted); font-size: 13px; }
+.step-pill b { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--line); color: var(--fg); font-size: 12px; }
+.step-pill.active { background: var(--brand); color: var(--on-brand); }
+.step-pill.active b { background: var(--accent); color: var(--on-accent); }
+.step-pill.done b { background: var(--good); color: var(--on-brand); }
+.layout { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 860px) { .layout { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; box-shadow: var(--shadow); min-width: 0; }
+.sub-label { font-size: 13px; color: var(--muted); margin: 18px 0 8px; display: block; }
+.grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); }
+.tile { font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 12px 10px; cursor: pointer; text-align: left; display: grid; gap: 2px; font-weight: 400; }
+.tile strong { font-size: 14px; }
+.tile small { font-size: 11px; color: var(--muted); }
+.tile:hover { border-color: var(--brand); }
+.brandmore { margin-top: 10px; justify-self: start; }
+.bmark { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font: 700 16px Cambria, Georgia, serif; color: var(--brand); background: var(--chip); border: 1px solid var(--line); margin-bottom: 4px; }
+.blogo { height: 34px; width: auto; max-width: 100%; object-fit: contain; background: #fff; border-radius: 6px; padding: 3px 6px; justify-self: start; }
+.tile[aria-pressed="true"] .bmark { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+.tile[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.tile[aria-pressed="true"] small { color: var(--accent); }
+.tile.icon-tile { text-align: center; justify-items: center; }
+.glyph { width: 36px; height: 36px; border-radius: 10px; background: var(--chip); color: var(--brand); display: grid; place-items: center; font-weight: 700; font-family: "Cambria", Georgia, serif; }
+.tile[aria-pressed="true"] .glyph { background: var(--accent); color: var(--on-accent); }
+input[type="text"], input[type="date"], input[type="number"], select, textarea {
+  font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; width: 100%;
+}
+textarea { min-height: 64px; resize: vertical; }
+input[aria-invalid="true"], select[aria-invalid="true"] { border-color: var(--bad); }
+.search { margin-bottom: 8px; }
+.field { display: grid; gap: 6px; margin-top: 14px; min-width: 0; }
+.field-row { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+label.lbl { font-size: 13px; color: var(--muted); }
+.err { font-size: 12px; color: var(--bad); min-height: 0; }
+.err:empty { display: none; }
+.ok-text { font-size: 12px; color: var(--good); }
+.warn-text { font-size: 12px; color: var(--warn); }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+button.action { font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 10px 16px; cursor: pointer; background: var(--brand); color: var(--on-brand); }
+button.ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); }
+button.chip { font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
+button.chip[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
+button:disabled { opacity: .45; cursor: not-allowed; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; justify-content: flex-end; }
+.actions .ghost { margin-right: auto; }
+.opt { position: relative; cursor: pointer; border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; background: var(--bg); font-size: 14px; font-weight: 600; }
+.opt:hover { border-color: var(--brand); }
+.opt:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
+.opt input[type="file"] { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+.options { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.drop { margin-top: 14px; border: 2px dashed var(--line); border-radius: 12px; padding: 22px 16px; text-align: center; color: var(--muted); background: var(--bg); display: grid; gap: 6px; justify-items: center; }
+.drop.over { border-color: var(--brand); }
+.drop img { max-width: 100%; max-height: 200px; border-radius: 10px; }
+.photo-meta { font-size: 12px; color: var(--muted); }
+.examples { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-top: 6px; }
+.examples button { padding: 0; border: 2px solid transparent; border-radius: 8px; overflow: hidden; background: none; cursor: pointer; }
+.examples button[aria-pressed="true"] { border-color: var(--accent); }
+.examples img { width: 100%; height: 60px; object-fit: cover; display: block; }
+.stage { display: grid; gap: 8px; margin-top: 14px; padding: 14px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); }
+.stage-row { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
+.stage-row .dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--line); flex: 0 0 14px; }
+.stage-row.done { color: var(--fg); }
+.stage-row.done .dot { background: var(--good); border-color: var(--good); }
+.stage-row.now { color: var(--fg); font-weight: 600; }
+.stage-row.now .dot { border-color: var(--accent); }
+.bar { height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.bar i { display: block; height: 100%; width: 0; background: var(--good); transition: width .5s ease; }
+.result { display: grid; gap: 6px; margin-top: 14px; padding: 14px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); }
+.result .row { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
+.result .row span:last-child { font-variant-numeric: tabular-nums; text-align: right; overflow-wrap: anywhere; }
+.pill { display: inline-block; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 2px 9px; }
+.pill.good { background: #d8efe3; color: #1d6447; }
+.pill.warn { background: #fbe9c4; color: #7a5300; }
+.pill.bad { background: #f6d9cf; color: #8a3319; }
+.pill.info { background: var(--chip); color: var(--brand); }
+.checkrow { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; font-weight: 400; cursor: pointer; }
+.checkrow input { margin-top: 4px; accent-color: var(--brand); width: 18px; height: 18px; flex: 0 0 18px; }
+.hidden { display: none !important; }
+.sim-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; background: var(--accent); color: var(--on-accent); border-radius: 6px; padding: 2px 6px; }
+
+/* Passport panel */
+.passport { background: var(--brand); color: var(--on-brand); border-radius: 14px; padding: 18px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+.passport .kicker { color: var(--accent); display: flex; gap: 8px; align-items: center; }
+.passport .model { font-family: "Cambria", Georgia, serif; font-size: 20px; overflow-wrap: anywhere; }
+.passport dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; font-size: 13px; }
+.passport dt { opacity: .7; }
+.passport dd { margin: 0; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.passport .flags { display: flex; gap: 6px; flex-wrap: wrap; }
+.passport .flag { background: var(--accent); color: var(--on-accent); font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 10px; }
+.timeline { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.timeline li { background: rgba(255,255,255,.1); border-radius: 10px; padding: 10px 12px; font-size: 13px; display: grid; gap: 2px; }
+.timeline li b { color: var(--accent); font-weight: 700; }
+.passport .empty { font-size: 13px; background: rgba(255,255,255,.1); border-radius: 10px; padding: 10px 12px; }
+.passport button { font: inherit; font-size: 13px; font-weight: 600; border: 0; border-radius: 10px; padding: 8px 12px; background: var(--accent); color: var(--on-accent); cursor: pointer; justify-self: start; }
+.passport button.light { background: transparent; color: var(--bg); border: 1px solid rgba(255,255,255,.4); }
+.passport input, .passport select, .passport textarea { color: #14213d; background: #fffdf8; }
+.passport .log-form { display: grid; gap: 8px; background: rgba(255,255,255,.08); border-radius: 12px; padding: 12px; }
+.passport .log-form label { font-size: 12px; opacity: .85; }
+.qr { width: 84px; height: 84px; border-radius: 8px; background: var(--bg); display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; padding: 6px; justify-self: end; }
+.qr i { background: var(--brand); border-radius: 1px; }
+.qr i.o { background: transparent; }
+.status-line { font-size: 12px; min-height: 16px; opacity: .9; }
+
+/* Fault examples, saved passports, FAQ */
+.fault-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); margin-top: 12px; }
+.fault { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; display: grid; min-width: 0; }
+.fault img { width: 100%; height: 170px; object-fit: cover; display: block; background: var(--chip); }
+.fault .body { padding: 12px 14px 14px; display: grid; gap: 6px; }
+.fault .tag { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.fault p { margin: 0; font-size: 13px; }
+.fault button { justify-self: start; font: inherit; font-size: 13px; font-weight: 600; border: 0; border-radius: 8px; padding: 6px 10px; background: var(--brand); color: var(--bg); cursor: pointer; margin-top: 4px; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.saved-list { display: grid; gap: 8px; margin-top: 10px; }
+.saved-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--bg); flex-wrap: wrap; }
+.saved-item span { font-size: 13px; color: var(--muted); }
+details { border-top: 1px solid var(--line); padding: 12px 0; }
+details:first-of-type { border-top: 0; }
+summary { cursor: pointer; font-weight: 600; }
+details p { margin: 8px 0 0; color: var(--muted); }
+/* Icons: one stroke set, sized to the text it sits beside */
+.ic { width: 18px; height: 18px; flex: 0 0 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: -4px; display: inline-block; }
+.ic-lg { width: 24px; height: 24px; flex: 0 0 24px; vertical-align: -6px; color: var(--turq); margin-right: 6px; }
+button .ic, label .ic, .opt .ic { margin-right: 6px; }
+.chip .ic, .action .ic { margin-right: 6px; }
+.kicker .ic, .passport .kicker .ic { color: var(--accent); }
+.opt { display: inline-flex; align-items: center; }
+.saved-item .ic { color: var(--turq); }
+/* Dashboard */
+.dash-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.dash-head select { width: auto; min-width: 220px; }
+.kpis { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin-top: 14px; }
+.kpi { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: grid; gap: 2px; min-width: 0; }
+.kpi b { font-family: "Cambria", Georgia, serif; font-size: 24px; color: var(--brand); font-variant-numeric: tabular-nums; }
+.kpi span { font-size: 12px; color: var(--muted); }
+.tablewrap { overflow-x: auto; margin-top: 8px; border: 1px solid var(--line); border-radius: 12px; }
+.dtable { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 520px; }
+.dtable th, .dtable td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.dtable th { color: var(--brand); font-size: 12px; text-transform: uppercase; letter-spacing: .05em; background: var(--bg); }
+.dtable td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.dtable tr:last-child td { border-bottom: 0; }
+.empty-cell { color: var(--muted); padding: 14px 10px; }
+.offers { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); margin-top: 10px; }
+.offer { border: 1px solid var(--line); border-radius: 14px; padding: 14px; background: var(--bg); display: grid; gap: 8px; align-content: start; min-width: 0; }
+.offer h4 { margin: 0; font-family: "Cambria", Georgia, serif; font-size: 16px; color: var(--brand); display: flex; gap: 8px; align-items: center; }
+.offer p { margin: 0; font-size: 13px; }
+.offer .who { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+.offer .who b { color: var(--fg); font-weight: 600; }
+.offer button { justify-self: start; }
+.profile-line { font-size: 14px; margin-top: 8px; }
+.insights { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 12px; }
+.ins { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px; min-width: 0; display: grid; gap: 8px; align-content: start; }
+.ins h4 { margin: 0; font-family: "Cambria", Georgia, serif; font-size: 15px; color: var(--brand); }
+.cols-chart { display: flex; align-items: stretch; gap: 8px; height: 130px; }
+.cols-chart .c { flex: 1; display: grid; grid-template-rows: 1fr auto; justify-items: center; min-width: 0; }
+.cols-chart .c i { align-self: end; width: 100%; background: var(--brand); border-radius: 6px 6px 0 0; }
+.cols-chart .c span { font-size: 11px; color: var(--muted); margin-top: 4px; }
+.hbar { display: grid; grid-template-columns: minmax(70px, auto) 1fr auto; gap: 8px; align-items: center; font-size: 13px; }
+.track { height: 8px; border-radius: 999px; background: var(--chip); overflow: hidden; }
+.track i { display: block; height: 100%; background: var(--accent); }
+.prog { height: 8px; border-radius: 999px; background: var(--chip); overflow: hidden; }
+.prog i { display: block; height: 100%; background: var(--good); }
+/* Sign-in, help and chat */
+.support { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--bg); display: grid; gap: 6px; justify-items: start; min-width: 0; }
+.support .kicker { margin: 0; }
+a.num { text-decoration: none; color: inherit; }
+a.chip { text-decoration: none; display: inline-flex; align-items: center; }
+.num { font-family: "Cambria", Georgia, serif; font-size: 24px; font-variant-numeric: tabular-nums; letter-spacing: .04em; user-select: all; }
+.chatlog { display: grid; gap: 8px; margin-top: 12px; max-height: 280px; overflow-y: auto; padding: 4px; min-width: 0; }
+.msg { max-width: 88%; padding: 9px 12px; border-radius: 12px; font-size: 14px; overflow-wrap: anywhere; }
+.msg.user { justify-self: end; background: var(--brand); color: var(--on-brand); border-bottom-right-radius: 4px; }
+.msg.bot { justify-self: start; background: var(--chip); color: var(--fg); border-bottom-left-radius: 4px; }
+.chatform { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: end; margin-top: 10px; }
+.chatform label { grid-column: 1 / -1; }
+@media (max-width: 480px) { .chatform { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+
+/* Vibe details: lapis and gold rules, soft header glow, gentle card accents */
+.brandbar { background: linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, transparent), var(--bg)); box-shadow: 0 6px 18px -14px rgba(19,49,92,.35); }
+.brandinner b { background: linear-gradient(90deg, var(--brand), var(--accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.card { position: relative; }
+.card::before { content: ""; position: absolute; left: 20px; right: 20px; top: 0; height: 2px; border-radius: 0 0 2px 2px; background: linear-gradient(90deg, var(--brand), var(--accent) 60%, transparent); opacity: .55; }
+.card h2 { padding-bottom: 6px; border-bottom: 1px dotted color-mix(in srgb, var(--accent) 45%, transparent); }
+.kicker { letter-spacing: .12em; }
+.tile { transition: border-color .2s ease, background-color .2s ease, transform .15s ease; }
+.tile:hover { transform: translateY(-1px); }
+.action { transition: filter .2s ease, transform .15s ease; }
+.action:hover { filter: brightness(1.06); }
+.step-pill.done b { background: var(--good); }
+.passport { background: linear-gradient(160deg, var(--brand), color-mix(in srgb, var(--brand) 70%, #000)); }
+@media (prefers-reduced-motion: reduce) { .tile, .action { transition: none; } .tile:hover { transform: none; } }
+
+/* Tenure watermark: faint translucent logo behind the whole page */
+body { position: relative; }
+body::before { content: ""; position: fixed; left: 50%; top: 50%; width: min(620px, 92vw); aspect-ratio: 1; transform: translate(-50%, -50%); background: url(img/tenure-logo.svg) center / contain no-repeat; opacity: .075; pointer-events: none; z-index: 0; }
+:root[data-theme="dark"] body::before, :root:not([data-theme="light"]) body::before { opacity: .09; }
+.brandbar, .wrap, .copyright { position: relative; z-index: 1; }
+.brandbar { z-index: 50; }
+/* Warm hero panel behind the heading */
+.topbar { position: relative; padding: 18px; border-radius: 18px; background: radial-gradient(circle at 92% 0%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 55%), radial-gradient(circle at 0% 100%, color-mix(in srgb, var(--brand) 16%, transparent), transparent 60%), color-mix(in srgb, var(--surface) 70%, transparent); border: 1px solid var(--line); }
+.topbar h1 { font-size: 28px; }
+/* Lapis and gold details */
+.hl { background: color-mix(in srgb, var(--accent) 16%, var(--surface)); border-color: color-mix(in srgb, var(--accent) 40%, transparent); color: var(--fg); }
+.card::after { content: ""; position: absolute; right: 14px; bottom: 12px; width: 26px; height: 26px; border-radius: 50%; border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); background: radial-gradient(circle, color-mix(in srgb, var(--accent) 35%, transparent) 0 3px, transparent 4px); pointer-events: none; opacity: .8; }
+.passport .flag { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+.step-pill.active { box-shadow: 0 6px 16px -10px var(--brand); }
+.tile[aria-pressed="true"] { box-shadow: 0 8px 18px -12px var(--brand); }
+.copyright { background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 10%, transparent), transparent); border-radius: 12px; padding: 12px 14px; }
+
+/* ---- Refreshed appliance chooser and details form ---- */
+.tile.icon-tile { padding: 14px 10px 12px; border-radius: 16px; justify-items: center; background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%); }
+.tile.icon-tile strong { font-weight: 600; }
+.glyph { width: 46px; height: 46px; border-radius: 14px; background: var(--chip); color: var(--brand); display: grid; place-items: center; font-weight: 400; font-family: inherit; }
+.glyph svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.tile[aria-pressed="true"] .glyph { background: rgba(255,255,255,.14); color: var(--on-brand); }
+.tile.icon-tile[aria-pressed="true"] { box-shadow: 0 10px 22px -14px var(--brand); }
+.tile.icon-tile[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+.tile.icon-tile[aria-pressed="true"] small { color: var(--accent); }
+#detailsWrap { margin-top: 18px; padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+#detailsWrap h3 { margin: 0 0 4px; font-size: 16px; }
+#detailsWrap .note { margin: 0 0 12px; }
+.dgrid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+.dgrid label { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
+.dgrid input, .dgrid select { font: inherit; font-size: 14px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; width: 100%; }
+.dgrid input:focus, .dgrid select:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* ---- Location fixes and get-it-fixed section ---- */
+#fixWrap { display: grid; gap: 6px; }
+.fx-card { border: 1px solid rgba(255,255,255,.22); border-radius: 12px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; color: inherit; }
+.fx-card small { display: block; opacity: .8; font-size: 12px; }
+.fx-card button { white-space: nowrap; }
+.fx-code { font-family: Consolas, "Courier New", monospace; letter-spacing: .04em; }
+
+/* ---- Quick find, service chooser, clearer location messages ---- */
+#smartMsg { min-height: 1.2em; margin: 4px 0 0; }
+#serviceWrap { margin-top: 14px; padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+#serviceWrap h3 { margin: 0 0 4px; font-size: 16px; }
+#serviceWrap .note { margin: 0 0 10px; }
+#svcChips { display: flex; flex-wrap: wrap; gap: 8px; }
+#svcChips .chip[aria-pressed="true"] { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
+
+/* ---- Code lookup, job status and export ---- */
+#codeLookup { margin-top: 10px; }
+#codeMsg { min-height: 1.2em; margin: 4px 0 0; }
+.job-status { font: inherit; font-size: 12px; margin-left: 6px; }
+#fxActions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 16l4-4 3 3 3-3 6 6"/><circle cx="9" cy="9" r="1.5"/></symbol>
+  <symbol id="i-gallery" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="13" rx="2"/><path d="M7 21h12a2 2 0 0 0 2-2V8"/><path d="M3 15l4-4 4 4 2-2 3 3"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14"/><circle cx="12" cy="17" r=".6"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M3 6h11v9H3z"/><path d="M14 9h4l3 3v3h-7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M14.5 5.5a4 4 0 0 0 4 6.5l-8.5 8.5a2 2 0 0 1-3-3L15.5 9a4 4 0 0 1-1-3.5z"/></symbol>
+  <symbol id="i-passport" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="11" r="3"/><path d="M9 17h6"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 4l9 16H3z"/><path d="M12 10v4"/><circle cx="12" cy="17" r=".6"/></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="M10 8l-4 4 4 4M6 12h10"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol>
+</defs></svg>
+<header class="brandbar">
+  <div class="brandinner">
+    <img src="img/tenure-logo.svg" alt="Tenure logo"><b>Tenure</b>
+  </div>
+</header>
+<main class="wrap">
+  <header class="topbar">
+    <div>
+      <h1>Set up any home appliance in three steps</h1>
+      <p class="lede">Pick the brand and type, add a photo of the label, then confirm the details. Every appliance gets a passport with its repair history.</p>
+      <div class="hl-row"><span class="hl">Repair history on file</span><span class="hl">Warranty tracked</span><span class="hl">Home pickup available</span></div>
+      <p class="note">The AI step uses an example catalogue and fixed results. Model numbers and prices are placeholders.</p>
+    </div>
+    <div class="topbar-actions">
+      <span class="note" id="whoami" style="margin:0 4px 0 0"></span>
+      <button class="chip" id="signinBtn" type="button" aria-expanded="false" aria-controls="signinCard"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg>Sign in</button>
+      <button class="chip" id="helpBtn" type="button" aria-controls="help"><svg class="ic" aria-hidden="true"><use href="#i-help"/></svg>Help and support</button>
+      <button class="chip" id="dashBtn" type="button" aria-controls="dash"><svg class="ic" aria-hidden="true"><use href="#i-calendar"/></svg>Dashboard</button>
+      <button class="chip" id="themeToggle" type="button" aria-pressed="false">Dark mode</button>
+    </div>
+  </header>
+
+  <section class="card hidden" id="signinCard" aria-labelledby="signin-title">
+    <h2 id="signin-title"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-user"/></svg>Sign in</h2>
+    <p class="note" style="margin:0 0 4px"><span class="hl">Private to this device</span> Choose how to verify. Your name and contact are saved only in this browser, so use a test contact rather than a real account.</p>
+    <div class="field-row" style="margin-top:12px">
+      <div class="field">
+        <label class="lbl" for="suName">Your name</label>
+        <input type="text" id="suName" maxlength="40" autocomplete="name" placeholder="e.g. Asha Patel">
+        <span class="err" id="errName"></span>
+      </div>
+      <div class="field">
+        <label class="lbl" for="suCountry">Country</label>
+        <select id="suCountry"></select>
+        <label class="lbl" for="suContact" style="margin-top:8px">Mobile number (without country code) or email</label>
+        <input type="text" id="suContact" maxlength="60" autocomplete="tel" inputmode="tel" placeholder="Mobile number or email">
+        <span class="err" id="errContact"></span>
+      </div>
+    </div>
+    <div class="authtabs" role="tablist" aria-label="Verification method">
+      <button class="authtab" type="button" role="tab" data-m="otp" aria-selected="true">Mobile code</button>
+      <button class="authtab" type="button" role="tab" data-m="email" aria-selected="false">Email code</button>
+      <button class="authtab" type="button" role="tab" data-m="password" aria-selected="false">Password</button>
+      <button class="authtab" type="button" role="tab" data-m="passkey" aria-selected="false">Fingerprint or face</button>
+    </div>
+    <div class="authpanel" data-panel="otp">
+      <p class="note">We text a 6-digit code to your mobile number.</p>
+      <div class="options"><button class="action" type="button" id="suSendOtp">Send mobile code</button></div>
+    </div>
+    <div class="authpanel hidden" data-panel="email">
+      <p class="note">We email a 6-digit code to your address.</p>
+      <div class="options"><button class="action" type="button" id="suSendEmail">Send email code</button></div>
+    </div>
+    <div class="authpanel hidden" data-panel="password">
+      <div class="field">
+        <label class="lbl" for="suPass">Password</label>
+        <div class="inline"><input type="password" id="suPass" maxlength="64" autocomplete="current-password" placeholder="At least 8 characters"><button class="chip" type="button" id="suShow" aria-pressed="false">Show</button></div>
+        <span class="err" id="errPass"></span>
+      </div>
+      <div class="options"><button class="action" type="button" id="suPassGo">Sign in with password</button></div>
+    </div>
+    <div class="authpanel hidden" data-panel="passkey">
+      <p class="note">Uses the fingerprint or face unlock on this device. Nothing is read from your device.</p>
+      <div class="options"><button class="action" type="button" id="suPasskey">Use fingerprint or face</button></div>
+    </div>
+    <div class="codewrap hidden" id="codeWrap" aria-live="polite">
+      <label class="lbl" for="suCode" id="codeLbl">Enter the 6-digit code</label>
+      <div class="inline"><input type="text" id="suCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="6-digit code"><button class="action" type="button" id="suVerify">Verify</button></div>
+      <span class="err" id="errCode"></span>
+      <span class="note" id="codeHint"></span>
+      <div class="options"><button class="chip" type="button" id="suResend" disabled>Resend code</button><button class="chip" type="button" id="suCancelCode">Cancel</button></div>
+    </div>
+    <div class="options" role="group" aria-label="Sign-in options">
+      <button class="action ghost" type="button" id="suGuest">Continue as guest</button>
+      <button class="action ghost" type="button" id="suOut"><svg class="ic" aria-hidden="true"><use href="#i-logout"/></svg>Sign out</button>
+    </div>
+    <p class="note" id="suStatus" role="status"></p>
+  </section>
+
+  <nav class="steps" aria-label="Setup progress">
+    <span class="step-pill active" id="p1"><b>1</b> Brand and type</span>
+    <span class="step-pill" id="p2"><b>2</b> Photo</span>
+    <span class="step-pill" id="p3"><b>3</b> Confirm and create</span>
+  </nav>
+
+  <div class="layout">
+    <section class="card" aria-labelledby="s-title">
+      <!-- Step 1 -->
+      <div id="step1">
+        <h2 id="s-title">Which appliance is it?</h2>
+        <label class="sub-label" for="smartFind">Quick find: type a brand and an appliance</label>
+        <input type="text" class="search" id="smartFind" placeholder="e.g. Samsung washing machine, LG AC, Philips mixer" autocomplete="off">
+        <p class="note" id="smartMsg" role="status"></p>
+        <div id="codeLookup">
+          <label class="sub-label" for="codeIn">Code lookup: enter a fault code or a job reference</label>
+          <input type="text" class="search" id="codeIn" placeholder="e.g. WM-DRN, or TNR-WM-DRN-7K2Q9" autocomplete="off" maxlength="40">
+          <p class="note" id="codeMsg" role="status"></p>
+        </div>
+        <span class="sub-label" id="brandLabel">Brand</span>
+        <input type="text" class="search" id="brandSearch" placeholder="Search brands" aria-label="Search brands">
+        <div class="grid" role="group" aria-labelledby="brandLabel" id="brandGrid"></div>
+        <button class="chip brandmore" type="button" id="brandMore" aria-controls="brandGrid"></button>
+        <span class="sub-label" id="typeLabel">Appliance type</span>
+        <div class="grid" role="group" aria-labelledby="typeLabel" id="typeGrid"></div>
+        <div id="serviceWrap" class="hidden">
+          <h3>What do you need done?</h3>
+          <p class="note">Pick one or more. These are saved with the passport and used to find the right technician.</p>
+          <div id="svcChips"></div>
+        </div>
+        <div id="detailsWrap" class="hidden">
+          <h3>Tell us about this appliance</h3>
+          <p class="note">Choose the brand and type above. Everything here is optional, but the more you add, the easier repairs and offers become.</p>
+          <div class="dgrid">
+            <label>Model you know (optional)<select id="dModel"><option value="">Not sure, identify from the photo</option></select></label>
+            <label>Model number from the label (optional)<input type="text" id="dModelNo" maxlength="30" placeholder="e.g. WM7000H" autocomplete="off"></label>
+            <label>Capacity or size (optional)<input type="text" id="dSize" maxlength="20" placeholder="e.g. 7 kg, 265 L, 1.5 ton, 43 inch"></label>
+            <label>Colour or finish (optional)<input type="text" id="dColour" maxlength="20" placeholder="e.g. Silver"></label>
+            <label>Energy rating (optional)<select id="dEnergy"><option value="">Not known</option><option>1 star</option><option>2 stars</option><option>3 stars</option><option>4 stars</option><option>5 stars</option></select></label>
+            <label>How you got it (optional)<select id="dChannel"><option value="">Not recorded</option><option>Shop</option><option>Online</option><option>Gift</option><option>Second-hand</option><option>Other</option></select></label>
+            <label>Who installed it (optional)<select id="dInstall"><option value="">Not recorded</option><option>Myself</option><option>Brand technician</option><option>Electrician or plumber</option><option>Other</option></select></label>
+          </div>
+        </div>
+        <div class="actions"><button class="action" id="next1" disabled>Continue</button></div>
+        <p class="err" id="err1" role="alert"></p>
+      </div>
+
+      <!-- Step 2 -->
+      <div id="step2" class="hidden">
+        <h2>Add a photo of the label</h2>
+        <p class="lede">Include the model plate. Photos should be at least 600 px wide and under 10 MB.</p>
+        <div class="drop" id="drop" tabindex="0">
+          <span id="dropText"><strong>Drop a photo here, or paste it (Ctrl/Cmd+V)</strong><br>JPG or PNG</span>
+          <img id="preview" class="hidden" alt="">
+          <span class="photo-meta" id="photoMeta"></span>
+        </div>
+        <div class="options" role="group" aria-label="Add a photo">
+          <label class="opt"><svg class="ic" aria-hidden="true"><use href="#i-camera"/></svg>Take photo<input type="file" id="cam" accept="image/*" capture="environment"></label>
+          <label class="opt"><svg class="ic" aria-hidden="true"><use href="#i-file"/></svg>Choose a file<input type="file" id="photo" accept="image/*"></label>
+          <label class="opt"><svg class="ic" aria-hidden="true"><use href="#i-gallery"/></svg>Choose from gallery<input type="file" id="gallery" accept="image/*" multiple></label>
+        </div>
+        <p class="note">Or try an example photo from the fault set:</p>
+        <div class="examples" id="examples"></div>
+        <p class="err" id="err2" role="alert"></p>
+        <div class="actions">
+          <button class="action ghost" id="back2" type="button">Back</button>
+          <button class="action" id="next2" type="button" disabled>Identify appliance</button>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div id="step3" class="hidden">
+        <h2>Confirm the details</h2>
+        <div class="stage" id="stages" aria-live="polite">
+          <div class="stage-row" data-s="0"><span class="dot"></span>Locating the model plate</div>
+          <div class="stage-row" data-s="1"><span class="dot"></span>Reading the text on the label</div>
+          <div class="stage-row" data-s="2"><span class="dot"></span>Matching against the catalogue</div>
+          <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+        </div>
+
+        <div class="result hidden" id="result" aria-live="polite">
+          <div class="row"><span>Model</span><span id="rModel">-</span></div>
+          <div class="row"><span>Serial number</span><span id="rSerial">-</span></div>
+          <div class="row"><span>Year (estimate)</span><span id="rYear">-</span></div>
+          <div class="row"><span>Match confidence</span><span id="rConf">-</span></div>
+          <div class="row"><span>Status</span><span id="rStatus">-</span></div>
+        </div>
+
+        <div class="field hidden" id="editModelWrap">
+          <label class="lbl" for="editModel">Confirm or correct the model. The AI is not confident enough to use this match alone.</label>
+          <select id="editModel"></select>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="lbl" for="serialIn">Serial number (check the label)</label>
+            <input type="text" id="serialIn" placeholder="e.g. SN48210937" maxlength="14" autocomplete="off">
+            <span class="err" id="errSerial"></span>
+          </div>
+          <div class="field">
+            <label class="lbl" for="purchase">Purchase date</label>
+            <input type="date" id="purchase">
+            <span class="err" id="errPurchase"></span>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label class="lbl" for="warranty"><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>Warranty</label>
+            <select id="warranty">
+              <option value="0">No warranty</option>
+              <option value="12" selected>12 months</option>
+              <option value="24">24 months</option>
+              <option value="36">36 months</option>
+            </select>
+            <span class="ok-text" id="warrantyStatus"></span>
+          </div>
+          <div class="field">
+            <label class="lbl" for="room">Where it is used</label>
+            <select id="room">
+              <option>Kitchen</option><option>Laundry</option><option>Living room</option><option>Bedroom</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label class="lbl" for="country">Country of use</label>
+            <select id="country"></select>
+          </div>
+          <div class="field">
+            <label class="lbl" for="locType">Where it is now</label>
+            <select id="locType">
+              <option>At home</option><option>Repair shop</option><option>Service centre</option><option>With a friend or family</option><option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label class="lbl" for="locPlace">Place or address (used to track the appliance)</label>
+          <input type="text" id="locPlace" maxlength="120" placeholder="e.g. Flat 4B, Sector 5, or shop name">
+          <div class="actions" style="margin-top:6px;justify-content:flex-start"><button class="chip" type="button" id="useGeo"><svg class="ic" aria-hidden="true"><use href="#i-pin"/></svg>Use my current location</button></div>
+          <span class="note" id="geoMsg" role="status"></span>
+        </div>
+        <div class="field">
+          <label class="lbl" for="nick">Nickname (optional)</label>
+          <input type="text" id="nick" placeholder="e.g. Kitchen fridge" maxlength="40">
+        </div>
+
+        <label class="checkrow">
+          <input type="checkbox" id="delivery">
+          <span><svg class="ic" aria-hidden="true"><use href="#i-truck"/></svg><strong>Home pickup and delivery</strong><br><span class="note" style="margin:0">Extra charge applies to cover local labour. The fee is to be confirmed by the team, so no amount is shown.</span></span>
+        </label>
+        <div class="field hidden" id="addressWrap">
+          <label class="lbl" for="address">Pickup address (required for delivery)</label>
+          <textarea id="address" maxlength="200" placeholder="House, street, area, city, PIN"></textarea>
+          <span class="err" id="errAddress"></span>
+        </div>
+
+        <p class="err" id="errCreate" role="alert"></p>
+        <div class="actions">
+          <button class="action ghost" id="back3" type="button">Back</button>
+          <button class="action" id="create" type="button" disabled>Create passport</button>
+        </div>
+      </div>
+    </section>
+
+    <aside class="passport" aria-label="Passport">
+      <div>
+        <p class="kicker"><svg class="ic" aria-hidden="true"><use href="#i-passport"/></svg>Appliance passport</p>
+        <div class="model" id="pModel">Not created yet</div>
+      </div>
+      <dl>
+        <dt>Brand</dt><dd id="pBrand">-</dd>
+        <dt>Type</dt><dd id="pType">-</dd>
+        <dt>Serial</dt><dd id="pSerial">-</dd>
+        <dt>Location</dt><dd id="pRoom">-</dd>
+        <dt>Warranty</dt><dd id="pWarranty">-</dd>
+        <dt>Passport ID</dt><dd id="pId">-</dd>
+      </dl>
+      <div class="flags" id="pFlags"></div>
+      <div>
+        <p class="kicker"><svg class="ic" aria-hidden="true"><use href="#i-wrench"/></svg>Repair history</p>
+        <div class="empty" id="pEmpty">No repairs recorded yet. Add the first entry below.</div>
+        <ol class="timeline" id="pTimeline"></ol>
+      </div>
+      <div>
+        <p class="kicker"><svg class="ic" aria-hidden="true"><use href="#i-pin"/></svg>Location history</p>
+        <ol class="timeline" id="pLocs"></ol>
+      </div>
+      <div class="log-form hidden" id="fixWrap">
+        <p class="kicker" style="margin:0"><svg class="ic" aria-hidden="true"><use href="#i-truck"/></svg>Get it fixed</p>
+        <label for="fxFault">What is the fault?</label>
+        <select id="fxFault"></select>
+        <p class="note fx-code" id="fxCode"></p>
+        <div id="fxProviders"></div>
+        <p class="note" id="fxMsg" role="status"></p>
+        <p class="kicker" style="margin:8px 0 0">Visits for this appliance</p>
+        <ol class="timeline" id="fxJobs"></ol>
+        <div id="fxActions">
+          <button type="button" class="chip" id="fxCopy" hidden>Copy reference</button>
+          <button type="button" class="chip" id="exportP">Export passport file</button>
+        </div>
+      </div>
+      <div class="log-form" id="locForm">
+        <p class="kicker" style="margin:0">Update location</p>
+        <label for="uLocType">Where it is now</label>
+        <select id="uLocType"><option>At home</option><option>Repair shop</option><option>Service centre</option><option>With a friend or family</option><option>In transit</option><option>Other</option></select>
+        <label for="uLocPlace">Place or address</label>
+        <input type="text" id="uLocPlace" maxlength="120" placeholder="Where it is now">
+        <button type="button" class="chip" id="useGeoUpd">Use my current location</button>
+        <span class="note" id="geoMsgUpd" role="status"></span>
+        <button type="button" id="addLoc">Save location</button>
+        <p class="err" id="errLoc" style="color:#ffb4a0"></p>
+      </div>
+      <div class="log-form" id="logForm">
+        <p class="kicker" style="margin:0">Add repair entry</p>
+        <label for="lDate">Date of visit</label>
+        <input type="date" id="lDate">
+        <label for="lPart">Part replaced</label>
+        <select id="lPart">
+          <option value="">Choose a part</option>
+          <option>Drain pump</option><option>Door seal</option><option>Motor bearing</option>
+          <option>Control board</option><option>Heating element</option><option>Display panel</option><option>Other</option>
+        </select>
+        <label for="lCost">Cost (number only, in the local currency)</label>
+        <input type="number" id="lCost" min="0" step="1" placeholder="0">
+        <label for="lNote">Diagnosis and notes</label>
+        <textarea id="lNote" maxlength="300" placeholder="What the technician found"></textarea>
+        <p class="err" id="errLog" style="color:#ffb4a0"></p>
+        <button type="button" id="addLog">Save repair entry</button>
+      </div>
+      <div class="qr" id="qr" aria-hidden="true"></div>
+      <div class="status-line" id="pStatus" role="status"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" class="light" id="copySummary">Copy passport summary</button>
+        <button type="button" class="light" id="resetPassport">Start a new setup</button>
+      </div>
+    </aside>
+  </div>
+
+  <section class="card" id="dash" aria-labelledby="dash-title">
+    <div class="dash-head">
+      <h2 id="dash-title"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-calendar"/></svg>Dashboard</h2>
+      <label class="lbl" style="display:flex;gap:8px;align-items:center">Profile
+        <select id="dashPick" aria-label="Choose a profile to view"></select>
+      </label>
+    </div>
+    <p class="profile-line" id="dashWho"></p>
+    <div class="filters" role="group" aria-label="Choose what the dashboard shows" id="dashScopes" style="margin-top:12px"></div>
+    <div class="kpis" id="kpis"></div>
+    <div class="insights" id="dInsights"></div>
+
+    <h3 style="margin-top:18px">Appliances</h3>
+    <div class="tablewrap"><table class="dtable" id="dApp"></table></div>
+
+    <h3 style="margin-top:18px">Transactions and activity</h3>
+    <div class="filters" role="group" aria-label="Filter transactions" id="txFilters" style="margin-top:8px"></div>
+    <div class="tablewrap"><table class="dtable" id="dTx"></table></div>
+
+    <h3 style="margin-top:18px">Offers for you</h3>
+    <p class="note" style="margin:4px 0 0">Offers are examples until partner agreements are signed. Prices, terms and partner names are to be confirmed. Requesting an offer only records a request. Nothing is charged here.</p>
+    <div class="offers" id="offers"></div>
+    <p class="note" id="offerMsg" role="status"></p>
+  </section>
+
+  <section class="card" id="ways" aria-labelledby="ways-title">
+    <h2 id="ways-title"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-passport"/></svg>Ways to use Tenure and benefit</h2>
+    <p class="lede">One passport follows each appliance, so every person who touches it can see what was done before.</p>
+    <div class="offers" style="margin-top:12px">
+      <article class="offer"><h4><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg>Owners</h4><p>Keep every repair, warranty date and receipt in one place. Get a clear repair history and fewer repeat visits.</p><a class="chip" href="#s-title">Add an appliance</a></article>
+      <article class="offer"><h4><svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>Families</h4><p>Track appliances for the whole household and see which one needs attention, from the dashboard.</p><a class="chip" href="#dash">Open dashboard</a></article>
+      <article class="offer"><h4><svg class="ic" aria-hidden="true"><use href="#i-wrench"/></svg>Technicians</h4><p>Open the history before a visit, spot recurring faults early and log each job so the next person benefits.</p><a class="chip" href="#s-title">Start a job record</a></article>
+      <article class="offer"><h4><svg class="ic" aria-hidden="true"><use href="#i-truck"/></svg>Repair shops and partners</h4><p>Join the network to receive booked jobs with the history attached. Partners pay a booking fee per job, to be agreed.</p><a class="chip" href="#help">Contact support</a></article>
+      <article class="offer"><h4><svg class="ic" aria-hidden="true"><use href="#i-passport"/></svg>Buyers and sellers</h4><p>Check an appliance's repair history before you buy it second-hand, or get a valuation before you trade it in.</p><a class="chip" href="#dash">See offers</a></article>
+    </div>
+  </section>
+
+  <section class="card" id="help" aria-labelledby="help-title">
+    <h2 id="help-title"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-help"/></svg>Help and support</h2>
+    <p class="lede">Call a support line, or ask the help assistant below. The assistant answers from the help library only. It does not search the web or give repair prices.</p>
+    <div class="field-row" style="margin-top:12px">
+      <div class="support">
+        <p class="kicker" style="color:var(--brand)"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg>Support line 1</p>
+        <a class="num" id="num1" href="tel:+917855023686">+91 7855023686</a>
+        <button class="chip" type="button" data-copy="+917855023686">Copy number</button>
+      </div>
+      <div class="support">
+        <p class="kicker" style="color:var(--brand)"><svg class="ic" aria-hidden="true"><use href="#i-phone"/></svg>Support line 2</p>
+        <a class="num" id="num2" href="tel:+916901936594">+91 6901936594</a>
+        <button class="chip" type="button" data-copy="+916901936594">Copy number</button>
+      </div>
+    </div>
+    <p class="note" id="copyMsg" role="status"></p>
+
+    <h3 style="margin-top:18px"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg>Ask a question</h3>
+    <div class="filters" role="group" aria-label="Common topics" style="margin-top:8px">
+      <button class="chip" type="button" data-q="How do I add a photo?">Photos</button>
+      <button class="chip" type="button" data-q="How do I check warranty?">Warranty</button>
+      <button class="chip" type="button" data-q="How does home delivery work?">Delivery</button>
+      <button class="chip" type="button" data-q="What is a recurring fault?">Repairs</button>
+      <button class="chip" type="button" data-q="Where is my passport saved?">Saved passports</button>
+      <button class="chip" type="button" data-q="How do I sign in?">Sign in</button>
+    </div>
+    <div class="chatlog" id="chatLog" aria-live="polite"></div>
+    <form class="chatform" id="chatForm">
+      <label class="lbl" for="chatInput" style="grid-column:1/-1">Type your question</label>
+      <input type="text" id="chatInput" maxlength="300" placeholder="e.g. Why is my serial number rejected?">
+      <button class="action" type="submit">Send</button>
+    </form>
+    <p class="note">For anything the assistant cannot answer, call a support line above.</p>
+  </section>
+
+  <section class="card" aria-labelledby="saved-title">
+    <h2 id="saved-title"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-passport"/></svg>Saved passports on this device</h2>
+    <p class="lede">Passports are saved in this browser only. Clearing site data removes them.</p>
+    <input type="text" id="findQ" placeholder="Search by name, ID, brand, place or country" aria-label="Find a passport" style="margin-top:12px">
+    <div class="saved-list" id="savedList"></div>
+  </section>
+
+  <section class="card" aria-labelledby="faults-title">
+    <h2 id="faults-title"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-alert"/></svg>Fault examples: what a passport would capture</h2>
+    <p class="lede">Real photos of damaged appliances and parts. Nothing here is a diagnosis; a technician fills in the findings.</p>
+    <div class="filters" role="group" aria-label="Filter examples" style="margin-top:12px">
+      <button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>
+      <button class="chip" type="button" data-filter="laundry" aria-pressed="false">Laundry</button>
+      <button class="chip" type="button" data-filter="kitchen" aria-pressed="false">Kitchen</button>
+      <button class="chip" type="button" data-filter="screen" aria-pressed="false">Screens</button>
+    </div>
+    <div class="fault-grid" id="faultGrid"></div>
+    <div class="card" style="margin-top:16px;background:var(--bg)" id="record" aria-live="polite">
+      <h3>Passport record</h3>
+      <p class="lede" id="rHint">Select an example above to see the record it would start.</p>
+      <dl class="hidden" id="rDl" style="display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:6px 14px;margin:10px 0 0;font-size:13px">
+        <dt style="color:var(--muted)">Appliance</dt><dd id="rAppliance" style="margin:0"></dd>
+        <dt style="color:var(--muted)">Visible in photo</dt><dd id="rSeen" style="margin:0"></dd>
+        <dt style="color:var(--muted)">Diagnosis</dt><dd style="margin:0;color:var(--muted)">Recorded by the technician after inspection</dd>
+      </dl>
+      <div class="actions" style="justify-content:flex-start">
+        <button class="action" type="button" id="useRecord" disabled>Add to current passport</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="faq-title">
+    <h2 id="faq-title"><svg class="ic ic-lg" aria-hidden="true"><use href="#i-chat"/></svg>Frequently asked questions</h2>
+    <details><summary>Do I need the original box or manual?</summary><p>No. A clear photo of the label is enough for this flow.</p></details>
+    <details><summary>Who can see my passport?</summary><p>Only you, on this device. Sharing with a technician is planned as an owner-controlled link.</p></details>
+    <details><summary>What if the AI gets the model wrong?</summary><p>When confidence is below 80%, you pick the correct model from a list before the passport is created.</p></details>
+    <details><summary>How does the recurring-fault flag work?</summary><p>If the same part is logged twice within 365 days, the passport shows a recurring flag for that part.</p></details>
+    <details><summary>Which appliances are covered?</summary><p>Home appliances: laundry, kitchen, cooling, climate and TVs. Computers and phones are outside this product.</p></details>
+  </section>
+</main>
+<footer class="copyright">
+  <div class="copy-inner">
+    <span>&copy; 2026 Tenure. All rights reserved.</span>
+    <span>Support +91 7855023686 &middot; +91 6901936594</span>
+    <span>Version 19 &middot; Made by Team Xerxes</span>
+    <span>Brand logos belong to their companies and are shown only to identify brands.</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var TODAY = new Date(); TODAY.setHours(0, 0, 0, 0);
+  var THRESHOLD = 0.8;
+
+  // Example data only. Brand names are real and used as labels; model codes and prices are placeholders.
+  var BRANDS = [
+    { name: "Samsung", note: "Fridges, washers, TVs, microwaves", alias: "samsung electronics" },
+    { name: "LG", note: "Washers, ACs, fridges, TVs", alias: "lg electronics goldstar" },
+    { name: "Whirlpool", note: "Washers, dryers, ovens", alias: "whirl pool" },
+    { name: "Bosch", note: "Dishwashers, ovens, fridges", alias: "bosch home" },
+    { name: "Siemens", note: "Dishwashers, ovens, washers", alias: "siemens home" },
+    { name: "Electrolux", note: "Washers, fridges, ovens", alias: "electrolux zanussi" },
+    { name: "Panasonic", note: "Microwaves, ACs, fridges", alias: "panasonic national" },
+    { name: "Sony", note: "Televisions, audio", alias: "sony bravia" },
+    { name: "Philips", note: "Air purifiers, kitchen, shavers", alias: "philips home" },
+    { name: "Haier", note: "Fridges, washers, ACs", alias: "haier thermocool" },
+    { name: "Daikin", note: "Air conditioners", alias: "daikin ac" },
+    { name: "Godrej", note: "Fridges, washers, ACs", alias: "godrej and boyce" },
+    { name: "Voltas", note: "Air conditioners, fridges", alias: "voltas tata" },
+    { name: "Blue Star", note: "Air conditioners, fridges", alias: "bluestar" },
+    { name: "IFB", note: "Washers, dishwashers, ovens", alias: "industrial finance corporation" },
+    { name: "Hitachi", note: "Fridges, washers, ACs", alias: "hitachi home" },
+    { name: "Toshiba", note: "Fridges, washers, TVs", alias: "toshiba lifestyle" },
+    { name: "Sharp", note: "Microwaves, fridges, TVs", alias: "sharp electronics" },
+    { name: "Onida", note: "Televisions, ACs", alias: "onida" },
+    { name: "Videocon", note: "Televisions, washers, fridges", alias: "videocon d2h" },
+    { name: "Kelvinator", note: "Fridges, ACs", alias: "kelvinator" },
+    { name: "Carrier", note: "Air conditioners", alias: "carrier midea" },
+    { name: "Mitsubishi Electric", note: "Air conditioners", alias: "mitsubishi" },
+    { name: "Hisense", note: "Televisions, fridges, ACs", alias: "hisense" },
+    { name: "TCL", note: "Televisions", alias: "tcl electronics" },
+    { name: "Midea", note: "Washers, fridges, ACs", alias: "midea" },
+    { name: "Beko", note: "Washers, fridges, dishwashers", alias: "beko arcelik" },
+    { name: "Miele", note: "Washers, dishwashers, ovens", alias: "miele" },
+    { name: "AEG", note: "Washers, ovens, dishwashers", alias: "aeg electrolux" },
+    { name: "Candy", note: "Washers, dryers, fridges", alias: "candy hoover" },
+    { name: "Hoover", note: "Washers, vacuum cleaners", alias: "hoover" },
+    { name: "GE Appliances", note: "Fridges, washers, ovens", alias: "general electric ge" },
+    { name: "Dyson", note: "Vacuums, air purifiers, hair care", alias: "dyson" },
+    { name: "Xiaomi", note: "Air purifiers, vacuums, fridges", alias: "mi mijia" },
+    { name: "Bajaj", note: "Mixers, irons, fans, water heaters", alias: "bajaj electricals" },
+    { name: "Crompton", note: "Fans, water heaters, mixers", alias: "crompton greaves" },
+    { name: "Usha", note: "Fans, irons, sewing machines", alias: "usha international" },
+    { name: "Prestige", note: "Kitchen appliances, cookers", alias: "prestige" },
+    { name: "Morphy Richards", note: "Kitchen appliances, irons", alias: "morphy" },
+    { name: "Russell Hobbs", note: "Kettles, toasters, kitchen", alias: "russell hobbs" },
+    { name: "Kenstar", note: "Fans, heaters, kitchen", alias: "kenstar" },
+    { name: "Lloyd", note: "ACs, fridges, washers", alias: "lloyd electric" },
+    { name: "Honeywell", note: "Air purifiers, humidifiers", alias: "honeywell home" },
+    { name: "Other", note: "Not listed here", alias: "" }
+  ];
+  var TYPES = [
+    { name: "Washing machine", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='3' y='3' width='18' height='18' rx='3'/><circle cx='12' cy='13' r='5'/><circle cx='6.5' cy='6.5' r='.8'/><circle cx='9.5' cy='6.5' r='.8'/></svg>" },
+    { name: "Refrigerator", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='6' y='2' width='12' height='20' rx='2'/><path d='M6 9h12M9 5v2M9 12v4'/></svg>" },
+    { name: "Air conditioner", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='2' y='5' width='20' height='8' rx='2'/><path d='M6 16v3M10 16v3M14 16v3M18 16v3'/></svg>" },
+    { name: "Television", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='2' y='4' width='20' height='13' rx='2'/><path d='M8 21h8M12 17v4'/></svg>" },
+    { name: "Microwave", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='2' y='5' width='20' height='14' rx='2'/><rect x='5' y='8' width='11' height='8' rx='1'/><path d='M18 9h1M18 12h1M18 15h1'/></svg>" },
+    { name: "Dishwasher", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='3' y='3' width='18' height='18' rx='2'/><path d='M3 9h18M7 15h10'/></svg>" },
+    { name: "Water purifier", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><path d='M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z'/></svg>" },
+    { name: "Oven", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='3' y='3' width='18' height='18' rx='2'/><rect x='6' y='9' width='12' height='8' rx='1'/><path d='M6 6h12'/></svg>" },
+    { name: "Geyser (water heater)", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='7' y='2' width='10' height='16' rx='5'/><path d='M10 18v3M14 18v3M12 6c-1 1.5-1.5 2.5 0 4'/></svg>" },
+    { name: "Ceiling fan", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><circle cx='12' cy='12' r='2'/><path d='M12 10C9 5 4 6 5 10M14 12c5-3 6 2 2 3M12 14c-3 5 1 6 3 2'/></svg>" },
+    { name: "Mixer grinder", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><path d='M8 3h8l1 6H7z'/><rect x='7' y='9' width='10' height='12' rx='2'/></svg>" },
+    { name: "Iron", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><path d='M3 16h14l4-3c1 2-1 5-3 5H3z'/><path d='M7 12c0-3 3-3 5-1'/></svg>" },
+    { name: "Vacuum cleaner", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><circle cx='9' cy='17' r='3'/><path d='M12 17h6l2-9M14 8h4'/></svg>" },
+    { name: "Chimney", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><path d='M4 4h16l-2 6H6z'/><path d='M8 10v10M16 10v10'/></svg>" },
+    { name: "Induction cooktop", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='2' y='6' width='20' height='12' rx='2'/><circle cx='7' cy='12' r='2.5'/><circle cx='15' cy='12' r='2.5'/></svg>" },
+    { name: "Air purifier", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='5' y='3' width='14' height='18' rx='3'/><path d='M9 8h6M9 12h6M9 16h6'/></svg>" },
+    { name: "Inverter or UPS", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='3' y='7' width='18' height='10' rx='2'/><path d='M11 9l-2 3h3l-2 3'/></svg>" },
+    { name: "Speaker or sound system", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='6' y='3' width='12' height='18' rx='2'/><circle cx='12' cy='15' r='3'/><circle cx='12' cy='7' r='1'/></svg>" },
+    { name: "Laptop", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='4' y='5' width='16' height='11' rx='1'/><path d='M2 19h20'/></svg>" },
+    { name: "Printer", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='6' y='3' width='12' height='6'/><rect x='3' y='9' width='18' height='8' rx='2'/><path d='M7 17h10v4H7z'/></svg>" },
+    { name: "Mobile phone", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='7' y='2' width='10' height='20' rx='2'/><path d='M11 18h2'/></svg>" },
+    { name: "Set-top box", glyph: "<svg viewBox='0 0 24 24' aria-hidden='true'><rect x='2' y='9' width='20' height='8' rx='2'/><path d='M8 5l4 4 4-4'/></svg>" }
+  ];
+  // Example catalogue entries (placeholder codes), used to show the match and the correction list.
+  var CATALOGUE = {
+    "Washing machine": ["WM-7 Series (example)", "WM-5 Series (example)", "WM-9 Series (example)"],
+    "Refrigerator": ["RF-3 Series (example)", "RF-6 Series (example)"],
+    "Microwave": ["MW-2 Series (example)", "MW-4 Series (example)"],
+    "Television": ["TV-55 Series (example)", "TV-43 Series (example)"],
+    "Air conditioner": ["AC-1 Series (example)", "AC-2 Series (example)"],
+    "Dishwasher": ["DW-8 Series (example)"],
+    "Water purifier": ["WP-1 Series (example)"],
+    "Oven": ["OV-6 Series (example)"]
+  };
+  var FAULTS = [
+    { id: "tv", file: "img/fault-tv-screen.jpg", group: "screen", appliance: "Television",
+      seen: "Cracked panel with vertical line distortion across the screen", alt: "Television with a cracked screen showing vertical line distortion" },
+    { id: "mw", file: "img/fault-microwave-glass.jpg", group: "kitchen", appliance: "Microwave",
+      seen: "Broken glass and debris inside the cavity and on the counter", alt: "Microwave with broken glass inside the cavity and debris on the counter" },
+    { id: "wm1", file: "img/fault-wm-control-module.jpg", group: "laundry", appliance: "Washing machine",
+      seen: "Control module opened, with heat sink, capacitors and wiring harness exposed", alt: "Washing machine control module opened, showing wiring and components" },
+    { id: "wm2", file: "img/fault-wm-motor-stator.jpg", group: "laundry", appliance: "Washing machine",
+      seen: "Motor stator removed from the drum, with copper windings and an attached connector board", alt: "Washing machine motor stator with copper windings removed from the drum" }
+  ];
+
+  var state = { brand: "", type: "", photoOk: false, photoSrc: "", photoLabel: "", ai: null,
+                passport: null, selectedFault: null };
+  var STORE_KEY = "rp-passports-v1";
+
+  // ---------- helpers ----------
+  function store() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || "[]"); } catch (e) { return []; } }
+  function saveStore(list) { try { localStorage.setItem(STORE_KEY, JSON.stringify(list)); return true; } catch (e) { return false; } }
+  function fmtDate(d) { return d.toISOString().slice(0, 10); }
+  function parseDate(s) { if (!s) return null; var d = new Date(s + "T00:00:00"); return isNaN(d) ? null : d; }
+  function addMonths(d, m) { var r = new Date(d.getTime()); r.setMonth(r.getMonth() + m); return r; }
+  function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
+  function setErr(id, msg) { var el = $(id); if (el) el.textContent = msg || ""; }
+  function markInvalid(input, bad) { if (input) input.setAttribute("aria-invalid", bad ? "true" : "false"); }
+
+  // ---------- brand and type grids ----------
+  function makeTile(label, sub, glyph, onPick) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "tile" + (glyph ? " icon-tile" : "");
+    b.setAttribute("aria-pressed", "false");
+    b.dataset.value = label;
+    if (glyph) { var g = document.createElement("span"); g.className = "glyph"; g.setAttribute("aria-hidden", "true"); if (glyph.charAt(0) === "<") { g.innerHTML = glyph; } else { g.textContent = glyph; } b.appendChild(g); }
+    var s = document.createElement("strong"); s.textContent = label; b.appendChild(s);
+    if (sub) { var sm = document.createElement("small"); sm.textContent = sub; b.appendChild(sm); }
+    b.addEventListener("click", onPick);
+    return b;
+  }
+  function markPressed(container, value) {
+    Array.prototype.forEach.call(container.children, function (b) { b.setAttribute("aria-pressed", String(b.dataset.value === value)); });
+  }
+  // Brand logos (uploaded by the team). Brands without a logo show a letter badge.
+  var BRAND_LOGOS = {
+    "Samsung": "img/brands/samsung.jpg",
+    "LG": "img/brands/lg.jpg",
+    "Whirlpool": "img/brands/whirlpool.jpg",
+    "Bosch": "img/brands/bosch.jpg",
+    "Siemens": "img/brands/siemens.jpg",
+    "Electrolux": "img/brands/electrolux.jpg",
+    "Panasonic": "img/brands/panasonic.jpg",
+    "Sony": "img/brands/sony.jpg",
+    "Philips": "img/brands/philips.jpg",
+    "Haier": "img/brands/haier.jpg",
+    "Daikin": "img/brands/daikin.jpg",
+    "Voltas": "img/brands/voltas.jpg",
+    "Blue Star": "img/brands/bluestar.jpg",
+    "IFB": "img/brands/ifb.jpg",
+    "Hitachi": "img/brands/hitachi.jpg",
+    "Toshiba": "img/brands/toshiba.jpg",
+    "Sharp": "img/brands/sharp.jpg",
+    "Onida": "img/brands/onida.jpg",
+    "Videocon": "img/brands/videocon.jpg",
+    "Kelvinator": "img/brands/kelvinator.jpg"
+,
+    "Carrier": "img/brands/carrier.jpg",
+    "Mitsubishi Electric": "img/brands/mitsubishi.jpg",
+    "Hisense": "img/brands/hisense.jpg",
+    "TCL": "img/brands/tcl.jpg",
+    "Midea": "img/brands/midea.jpg",
+    "Beko": "img/brands/beko.jpg",
+    "Miele": "img/brands/miele.jpg",
+    "AEG": "img/brands/aeg.jpg",
+    "Candy": "img/brands/candy.jpg",
+    "Hoover": "img/brands/hoover.jpg",
+    "GE Appliances": "img/brands/ge.jpg",
+    "Dyson": "img/brands/dyson.jpg",
+    "Xiaomi": "img/brands/xiaomi.jpg",
+    "Bajaj": "img/brands/bajaj.jpg",
+    "Crompton": "img/brands/crompton.jpg",
+    "Usha": "img/brands/usha.jpg",
+    "Prestige": "img/brands/prestige.jpg",
+    "Morphy Richards": "img/brands/morphy.jpg",
+    "Russell Hobbs": "img/brands/russellhobbs.jpg",
+    "Kenstar": "img/brands/kenstar.jpg"
+,
+    "Honeywell": "img/brands/honeywell.jpg",
+    "Lloyd": "img/brands/lloyd.jpg",
+    "Godrej": "img/brands/godrej.jpg"
+  };
+  var brandGrid = $("brandGrid"), typeGrid = $("typeGrid"), brandMore = $("brandMore");
+  var FEATURED_BRANDS = 8, brandsOpen = false;
+  function renderBrands(filter) {
+    brandGrid.innerHTML = "";
+    var q = (filter || "").trim().toLowerCase();
+    var searching = q.length > 0;
+    var brands = BRANDS.filter(function (b) { return b.name !== "Other"; });
+    var matches = brands.filter(function (b) {
+      return !searching || (b.name + " " + b.note + " " + (b.alias || "")).toLowerCase().indexOf(q) !== -1;
+    });
+    var shown = (searching || brandsOpen) ? matches : brands.slice(0, FEATURED_BRANDS);
+    var other = BRANDS[BRANDS.length - 1];
+    shown = shown.concat([other]);
+    if (!matches.length) { var none = document.createElement("p"); none.className = "note"; none.textContent = "No brand matches “" + filter.trim() + "”. Choose Other, or try a shorter word."; brandGrid.appendChild(none); }
+    shown.forEach(function (b) {
+      var tile = makeTile(b.name, b.note, null, function () { state.brand = b.name; markPressed(brandGrid, b.name); $("detailsWrap").classList.remove("hidden"); $("serviceWrap").classList.remove("hidden"); checkStep1(); });
+      var mark;
+      if (BRAND_LOGOS[b.name]) {
+        mark = document.createElement("img"); mark.className = "blogo"; mark.src = BRAND_LOGOS[b.name]; mark.alt = b.name + " logo";
+      } else {
+        mark = document.createElement("span"); mark.className = "bmark"; mark.setAttribute("aria-hidden", "true");
+        mark.textContent = b.name === "Other" ? "+" : b.name.charAt(0);
+      }
+      tile.insertBefore(mark, tile.firstChild);
+      brandGrid.appendChild(tile);
+    });
+    brandMore.classList.toggle("hidden", searching);
+    brandMore.textContent = brandsOpen ? "Show fewer brands" : "Show all " + brands.length + " brands";
+    brandMore.setAttribute("aria-expanded", String(brandsOpen));
+    markPressed(brandGrid, state.brand);
+  }
+  brandMore.addEventListener("click", function () { brandsOpen = !brandsOpen; renderBrands($("brandSearch").value); });
+  $("brandSearch").addEventListener("input", function (e) { renderBrands(e.target.value); });
+  renderBrands("");
+  TYPES.forEach(function (t) {
+    typeGrid.appendChild(makeTile(t.name, "", t.glyph, function () { state.type = t.name; markPressed(typeGrid, t.name); fillModelList(); checkStep1(); }));
+  });
+  var SERVICES = ["Repair", "Replace a part", "Service or deep clean", "Installation", "Inspection and quote", "Warranty claim", "Pickup and delivery"];
+  function renderServices() {
+    state.service = state.service || [];
+    var box = $("svcChips"); box.innerHTML = "";
+    SERVICES.forEach(function (name) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip";
+      b.setAttribute("aria-pressed", String(state.service.indexOf(name) > -1));
+      b.textContent = name;
+      b.addEventListener("click", function () {
+        var i = state.service.indexOf(name);
+        if (i > -1) { state.service.splice(i, 1); } else { state.service.push(name); }
+        renderServices();
+      });
+      box.appendChild(b);
+    });
+  }
+  renderServices();
+
+  // Quick find: reads a brand and an appliance type from free text.
+  var TYPE_WORDS = [["Washing machine", ["washing", "washer", "laundry", "front load", "top load"]], ["Refrigerator", ["fridge", "refrigerator", "freezer"]], ["Air conditioner", ["ac", "air conditioner", "split ac", "split"]], ["Television", ["tv", "television", "led tv"]], ["Microwave", ["microwave"]], ["Dishwasher", ["dishwasher", "dish washer"]], ["Water purifier", ["ro", "water purifier", "purifier"]], ["Oven", ["oven"]], ["Geyser (water heater)", ["geyser", "water heater"]], ["Ceiling fan", ["fan", "ceiling fan"]], ["Mixer grinder", ["mixer", "grinder", "blender"]], ["Iron", ["iron"]], ["Vacuum cleaner", ["vacuum", "vacuum cleaner"]], ["Chimney", ["chimney"]], ["Induction cooktop", ["induction", "cooktop", "hob"]], ["Air purifier", ["air purifier"]], ["Inverter or UPS", ["inverter", "ups"]], ["Speaker or sound system", ["speaker", "soundbar", "sound system", "home theatre"]], ["Laptop", ["laptop", "notebook"]], ["Printer", ["printer"]], ["Mobile phone", ["mobile", "smartphone", "phone"]], ["Set-top box", ["set top box", "set-top box", "dth"]]];
+  function hasWord(text, word) { return (" " + text + " ").indexOf(" " + word + " ") > -1; }
+  function smartFind(raw) {
+    var text = " " + raw.toLowerCase().replace(/[^a-z0-9+ -]+/g, " ").replace(/\s+/g, " ").trim() + " ";
+    var found = { brand: "", type: "" };
+    BRANDS.forEach(function (b) {
+      if (b.name === "Other") return;
+      var names = [b.name].concat((b.alias || "").split(" "));
+      var hit = names.some(function (n) { n = n.toLowerCase(); return n.length >= 2 && hasWord(text, n); });
+      if (hit && !found.brand) found.brand = b.name;
+    });
+    TYPE_WORDS.forEach(function (t) {
+      if (found.type) return;
+      if (t[1].some(function (w) { return hasWord(text, w); })) found.type = t[0];
+    });
+    return found;
+  }
+  $("smartFind").addEventListener("input", function (e) {
+    var raw = e.target.value;
+    var r = smartFind(raw);
+    var msg = $("smartMsg");
+    if (!raw.trim()) { msg.textContent = ""; return; }
+    if (!r.brand && !r.type) { msg.textContent = "No brand or appliance recognised yet. Try a word such as washing, fridge, AC, Samsung or LG."; return; }
+    if (r.brand) {
+      state.brand = r.brand;
+      $("brandSearch").value = r.brand; renderBrands(r.brand); markPressed(brandGrid, r.brand);
+      $("detailsWrap").classList.remove("hidden"); $("serviceWrap").classList.remove("hidden");
+    }
+    if (r.type) {
+      state.type = r.type; markPressed(typeGrid, r.type); fillModelList();
+    }
+    checkStep1();
+    msg.textContent = "Found: " + (r.brand || "brand not found, choose one below") + (r.type ? ", " + r.type : ", choose the appliance type below") + ".";
+  });
+  function fillModelList() {
+    var sel = $("dModel");
+    sel.innerHTML = "";
+    var first = document.createElement("option"); first.value = ""; first.textContent = "Not sure, identify from the photo"; sel.appendChild(first);
+    (CATALOGUE[state.type] || []).forEach(function (m) { var o = document.createElement("option"); o.value = m; o.textContent = m; sel.appendChild(o); });
+  }
+  function readDetails() {
+    return {
+      modelKnown: $("dModel").value, modelNumber: $("dModelNo").value.trim().toUpperCase(),
+      size: $("dSize").value.trim(), colour: $("dColour").value.trim(), energy: $("dEnergy").value,
+      channel: $("dChannel").value, installer: $("dInstall").value, service: (state.service || []).slice()
+    };
+  }
+  function checkStep1() {
+    $("next1").disabled = !(state.brand && state.type);
+    setErr("err1", "");
+  }
+  function setStep(n) {
+    [1, 2, 3].forEach(function (i) {
+      $("step" + i).classList.toggle("hidden", i !== n);
+      var pill = $("p" + i);
+      pill.classList.toggle("active", i === n);
+      pill.classList.toggle("done", i < n);
+    });
+  }
+
+  $("next1").addEventListener("click", function () {
+    if (!state.brand || !state.type) { setErr("err1", "Choose a brand and an appliance type to continue."); return; }
+    setStep(2);
+  });
+  $("back2").addEventListener("click", function () { setStep(1); });
+  $("back3").addEventListener("click", function () { setStep(2); });
+
+  // ---------- photo input ----------
+  // Every route (camera, file, gallery, drop, paste, example) ends in acceptPhoto().
+  function acceptPhoto(src, label, meta) {
+    state.photoOk = true; state.photoSrc = src; state.photoLabel = label;
+    var img = $("preview");
+    img.src = src; img.alt = label; img.classList.remove("hidden");
+    $("dropText").classList.add("hidden");
+    $("photoMeta").textContent = meta || "";
+    $("next2").disabled = false;
+    setErr("err2", "");
+  }
+  function rejectPhoto(msg) {
+    state.photoOk = false;
+    $("next2").disabled = true;
+    setErr("err2", msg);
+  }
+  function setPhoto(file) {
+    if (!file) return;
+    if (!/^image\/(jpeg|png)$/.test(file.type)) { rejectPhoto("That file is not a JPG or PNG photo. Choose another file."); return; }
+    if (file.size > 10 * 1024 * 1024) { rejectPhoto("That photo is over 10 MB. Choose a smaller photo or retake it."); return; }
+    var url = URL.createObjectURL(file);
+    var probe = new Image();
+    probe.onload = function () {
+      if (probe.naturalWidth < 600) {
+        rejectPhoto("That photo is " + probe.naturalWidth + " px wide. Retake it at 600 px or more so the label can be read.");
+        return;
+      }
+      acceptPhoto(url, "Photo of the appliance you uploaded", probe.naturalWidth + " x " + probe.naturalHeight + " px, " + Math.round(file.size / 1024) + " KB");
+    };
+    probe.onerror = function () { rejectPhoto("The photo could not be opened. Try another file."); };
+    probe.src = url;
+  }
+  ["cam", "photo", "gallery"].forEach(function (id) {
+    $(id).addEventListener("change", function () { setPhoto(this.files && this.files[0]); this.value = ""; });
+  });
+  var dropZone = $("drop");
+  ["dragenter", "dragover"].forEach(function (ev) { dropZone.addEventListener(ev, function (e) { e.preventDefault(); dropZone.classList.add("over"); }); });
+  ["dragleave", "drop"].forEach(function (ev) { dropZone.addEventListener(ev, function (e) { e.preventDefault(); dropZone.classList.remove("over"); }); });
+  dropZone.addEventListener("drop", function (e) { setPhoto(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]); });
+  document.addEventListener("paste", function (e) {
+    if ($("step2").classList.contains("hidden")) return;
+    var items = (e.clipboardData && e.clipboardData.items) || [];
+    for (var i = 0; i < items.length; i++) { if (items[i].kind === "file") { setPhoto(items[i].getAsFile()); return; } }
+  });
+  var exWrap = $("examples");
+  FAULTS.forEach(function (f) {
+    var b = document.createElement("button");
+    b.type = "button"; b.setAttribute("aria-pressed", "false");
+    b.setAttribute("aria-label", "Use example photo: " + f.appliance);
+    var im = document.createElement("img"); im.src = f.file; im.alt = ""; im.loading = "lazy";
+    b.appendChild(im);
+    b.addEventListener("click", function () {
+      acceptPhoto(f.file, f.alt, "Example photo from the fault set");
+      Array.prototype.forEach.call(exWrap.children, function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+    });
+    exWrap.appendChild(b);
+  });
+
+  $("next2").addEventListener("click", function () {
+    if (!state.photoOk) { setErr("err2", "Add a photo that is at least 600 px wide first."); return; }
+    setStep(3);
+    runIdentify();
+  });
+
+  // ---------- identify (simulated, with staged progress) ----------
+  var stageTimers = [];
+  function clearTimers() { stageTimers.forEach(clearTimeout); stageTimers = []; }
+  function runIdentify() {
+    clearTimers();
+    var rows = document.querySelectorAll(".stage-row");
+    rows.forEach(function (r) { r.classList.remove("done", "now"); });
+    $("result").classList.add("hidden");
+    $("editModelWrap").classList.add("hidden");
+    $("create").disabled = true;
+    $("bar").style.width = "0%";
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var step = reduce ? 0 : 600;
+    var stepIdx = 0;
+    function tick() {
+      rows.forEach(function (r, i) { r.classList.toggle("done", i < stepIdx); r.classList.toggle("now", i === stepIdx); });
+      $("bar").style.width = Math.round(((stepIdx + 1) / (rows.length + 1)) * 100) + "%";
+      if (stepIdx < rows.length) { stepIdx++; stageTimers.push(setTimeout(tick, step)); }
+      else { stageTimers.push(setTimeout(showResult, step)); }
+    }
+    tick();
+  }
+  function showResult() {
+    var rows = document.querySelectorAll(".stage-row");
+    rows.forEach(function (r) { r.classList.remove("now"); r.classList.add("done"); });
+    $("bar").style.width = "100%";
+    // Example result for the chosen type, always the first catalogue entry; confidence fixed for the prototype.
+    var options = CATALOGUE[state.type] || ["Unknown model (example)"];
+    var conf = state.type === "Washing machine" ? 0.93 : 0.72;
+    state.ai = { model: options[0], options: options, serial: "SN4821" + "0937", year: 2021, conf: conf };
+    $("rModel").textContent = state.ai.model;
+    $("rSerial").textContent = state.ai.serial;
+    $("rYear").textContent = String(state.ai.year) + " (estimate)";
+    $("rConf").textContent = Math.round(conf * 100) + "%";
+    var needsReview = conf < THRESHOLD;
+    $("rStatus").innerHTML = needsReview
+      ? '<span class="pill warn">Please confirm the model</span>'
+      : '<span class="pill good">Ready to confirm</span>';
+    $("result").classList.remove("hidden");
+    var sel = $("editModel");
+    sel.innerHTML = "";
+    options.forEach(function (o) { var op = document.createElement("option"); op.textContent = o; sel.appendChild(op); });
+    $("editModelWrap").classList.toggle("hidden", !needsReview);
+    $("serialIn").value = state.ai.serial;
+    checkCreate();
+  }
+
+  // ---------- step 3 validation ----------
+  var serialIn = $("serialIn"), purchase = $("purchase"), warranty = $("warranty"), delivery = $("delivery"), address = $("address");
+  function validateSerial() {
+    var v = serialIn.value.trim().toUpperCase();
+    if (!v) { setErr("errSerial", "Enter the serial number from the label."); markInvalid(serialIn, true); return false; }
+    if (!/^[A-Z0-9-]{6,14}$/.test(v)) { setErr("errSerial", "Use 6 to 14 letters, digits or hyphens."); markInvalid(serialIn, true); return false; }
+    setErr("errSerial", ""); markInvalid(serialIn, false); return true;
+  }
+  function validatePurchase() {
+    var d = parseDate(purchase.value);
+    if (!d) { setErr("errPurchase", "Choose the purchase date from your receipt."); markInvalid(purchase, true); return false; }
+    if (d > TODAY) { setErr("errPurchase", "The purchase date cannot be in the future."); markInvalid(purchase, true); return false; }
+    setErr("errPurchase", ""); markInvalid(purchase, false); return true;
+  }
+  function updateWarranty() {
+    var d = parseDate(purchase.value), months = parseInt(warranty.value, 10);
+    var out = $("warrantyStatus");
+    if (!d || d > TODAY || months === 0) { out.className = "warn-text"; out.textContent = months === 0 ? "No warranty recorded." : "Add a purchase date to check warranty."; return; }
+    var end = addMonths(d, months);
+    if (end >= TODAY) { out.className = "ok-text"; out.textContent = "Under warranty until " + fmtDate(end) + " (" + daysBetween(TODAY, end) + " days left)."; }
+    else { out.className = "warn-text"; out.textContent = "Warranty ended on " + fmtDate(end) + "."; }
+  }
+  function validateDelivery() {
+    var on = delivery.checked;
+    $("addressWrap").classList.toggle("hidden", !on);
+    if (!on) { setErr("errAddress", ""); markInvalid(address, false); return true; }
+    if (address.value.trim().length < 10) { setErr("errAddress", "Enter a full pickup address (at least 10 characters)."); markInvalid(address, true); return false; }
+    setErr("errAddress", ""); markInvalid(address, false); return true;
+  }
+  function checkCreate() {
+    var ok = !!state.ai && validateSerial() && validatePurchase() && validateDelivery() && $("locPlace").value.trim().length >= 3;
+    $("create").disabled = !ok;
+  }
+  [serialIn, purchase, address, $("locPlace")].forEach(function (el) { el.addEventListener("input", function () { updateWarranty(); checkCreate(); }); });
+  warranty.addEventListener("change", function () { updateWarranty(); });
+  delivery.addEventListener("change", checkCreate);
+  purchase.max = fmtDate(TODAY);
+
+  // ---------- passport ----------
+  function recurringFlags(repairs) {
+    var flags = [];
+    var byPart = {};
+    repairs.forEach(function (r) { (byPart[r.part] = byPart[r.part] || []).push(new Date(r.date + "T00:00:00")); });
+    Object.keys(byPart).forEach(function (part) {
+      var dates = byPart[part].sort(function (a, b) { return a - b; });
+      for (var i = 0; i + 1 < dates.length; i++) {
+        if (daysBetween(dates[i], dates[i + 1]) <= 365) { flags.push(part); break; }
+      }
+    });
+    return flags;
+  }
+  function renderPassport() {
+    var p = state.passport;
+    if (!p) {
+      $("pModel").textContent = "Not created yet";
+      ["pBrand", "pType", "pSerial", "pRoom", "pWarranty", "pId"].forEach(function (id) { $(id).textContent = "-"; });
+      $("pFlags").innerHTML = ""; $("pTimeline").innerHTML = ""; $("pEmpty").classList.remove("hidden");
+      $("logForm").classList.add("hidden"); $("locForm").classList.add("hidden"); $("fixWrap").classList.add("hidden"); $("pLocs").innerHTML = ""; $("qr").innerHTML = "";
+      return;
+    }
+    $("pModel").textContent = p.nickname || p.model;
+    $("pBrand").textContent = p.brand; $("pType").textContent = p.type;
+    $("pSerial").textContent = p.serial; $("pRoom").textContent = currentLoc(p);
+    $("pWarranty").textContent = p.warrantyText; $("pId").textContent = p.id;
+    var flags = recurringFlags(p.repairs);
+    $("pFlags").innerHTML = "";
+    flags.forEach(function (f) { var s = document.createElement("span"); s.className = "flag"; s.textContent = "Recurring: " + f; $("pFlags").appendChild(s); });
+    var tl = $("pTimeline"); tl.innerHTML = "";
+    p.repairs.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; }).forEach(function (r) {
+      var li = document.createElement("li");
+      var head = document.createElement("span"); var b = document.createElement("b"); b.textContent = r.date + "  ";
+      head.appendChild(b); head.appendChild(document.createTextNode(r.part));
+      var detail = document.createElement("span"); detail.textContent = (r.note || "No notes") + (r.cost !== "" ? "  |  cost " + r.cost : "");
+      detail.style.opacity = ".85";
+      li.appendChild(head); li.appendChild(detail); tl.appendChild(li);
+    });
+    $("pEmpty").classList.toggle("hidden", p.repairs.length > 0);
+    renderFix(p);
+    $("logForm").classList.remove("hidden");
+    drawQr(p.id);
+    renderLocations(p);
+  }
+  function drawQr(seed) {
+    var q = $("qr"); q.innerHTML = "";
+    var h = 0; for (var i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+    for (var k = 0; k < 49; k++) {
+      var bit = ((h >> (k % 24)) ^ (k * 7)) & 1;
+      var el = document.createElement("i"); if (!bit) el.className = "o"; q.appendChild(el);
+    }
+  }
+
+  create.addEventListener("click", function () {
+    setErr("errCreate", "");
+    if (!checkCreate || $("create").disabled) { return; }
+    var model = $("editModelWrap").classList.contains("hidden") ? state.ai.model : $("editModel").value;
+    var id = "RP-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+    state.passport = {
+      id: id, brand: state.brand, type: state.type, model: model,
+      serial: serialIn.value.trim().toUpperCase(), room: $("room").value,
+      nickname: $("nick").value.trim(), purchase: purchase.value, warranty: parseInt(warranty.value, 10),
+      warrantyText: $("warrantyStatus").textContent.replace(/\.$/, "") || "Not recorded",
+      delivery: delivery.checked, address: delivery.checked ? address.value.trim() : "",
+      country: $("country").value,
+      details: readDetails(),
+      repairs: [],
+      locations: [{ date: fmtDate(TODAY), type: $("locType").value, place: $("locPlace").value.trim(), country: $("country").value, geo: state.geo || null }],
+      created: fmtDate(TODAY)
+    };
+    var list = store().filter(function (x) { return x.id !== id; });
+    list.unshift(state.passport);
+    var saved = saveStore(list);
+    renderPassport();
+    renderSaved();
+    $("pStatus").textContent = (saved ? "Passport created and saved on this device." : "Passport created. Saving is unavailable in this browser, so it will be lost on reload.") +
+      (state.passport.delivery ? " Home pickup and delivery requested; fee to be confirmed." : "");
+    $("create").disabled = true;
+    $("create").textContent = "Passport created";
+    $("p3").classList.add("done");
+  });
+
+  $("addLog").addEventListener("click", function () {
+    var p = state.passport; if (!p) return;
+    var date = parseDate($("lDate").value), part = $("lPart").value, costRaw = $("lCost").value;
+    var note = $("lNote").value.trim();
+    var err = "";
+    if (!date) err = "Choose the date of the visit.";
+    else if (date > TODAY) err = "The visit date cannot be in the future.";
+    else if (date < parseDate(p.created) && p.purchase && date < parseDate(p.purchase)) err = "The visit is before the purchase date.";
+    else if (!part) err = "Choose the part that was replaced, or Other.";
+    else if (costRaw !== "" && (isNaN(Number(costRaw)) || Number(costRaw) < 0)) err = "Cost must be a number of 0 or more.";
+    $("errLog").textContent = err;
+    if (err) return;
+    p.repairs.push({ date: $("lDate").value, part: part, cost: costRaw === "" ? "" : Number(costRaw), note: note });
+    persist();
+    $("lDate").value = ""; $("lPart").value = ""; $("lCost").value = ""; $("lNote").value = "";
+    renderPassport(); renderSaved();
+    var flags = recurringFlags(p.repairs);
+    $("pStatus").textContent = flags.length ? "Recurring fault flagged: " + flags.join(", ") + ". Suggest a root-cause check." : "Repair entry saved.";
+  });
+  // Universal fault codes: a fixed code per appliance type and fault, the same for every shop.
+  var FAULT_CODES = {
+    "Washing machine": { code: "WM", faults: [["Not draining", "DRN"], ["Not spinning", "SPN"], ["Drum noise", "NOI"], ["Water leak", "LEK"], ["Error code on display", "ERR"]] },
+    "Refrigerator": { code: "RF", faults: [["Not cooling", "COL"], ["Freezing too much", "FRZ"], ["Water leak", "LEK"], ["Door seal worn", "SEL"]] },
+    "Air conditioner": { code: "AC", faults: [["Not cooling", "COL"], ["Water dripping indoors", "LEK"], ["Noisy outdoor unit", "NOI"], ["Does not switch on", "PWR"]] },
+    "Television": { code: "TV", faults: [["No picture", "PIC"], ["No sound", "SND"], ["Backlight failure", "BLT"], ["Does not switch on", "PWR"]] },
+    "Microwave": { code: "MW", faults: [["Not heating", "HTG"], ["Turntable noise", "NOI"], ["Sparks or burning smell", "SPK"], ["Does not switch on", "PWR"]] },
+    "Dishwasher": { code: "DW", faults: [["Not draining", "DRN"], ["Not cleaning well", "CLN"], ["Leaking", "LEK"], ["Does not start", "PWR"]] },
+    "Water purifier": { code: "WP", faults: [["Low water flow", "FLW"], ["Filter needs changing", "FLT"], ["Leaking", "LEK"], ["Taste or smell", "TST"]] },
+    "Oven": { code: "OV", faults: [["Not heating evenly", "HTG"], ["Door problem", "DOR"], ["Igniter or element fault", "IGN"], ["Does not switch on", "PWR"]] },
+    "Geyser (water heater)": { code: "GY", faults: [["No hot water", "HTG"], ["Leaking tank or pipe", "LEK"], ["Tripping the switch", "ELC"], ["Thermostat not working", "THM"]] },
+    "Ceiling fan": { code: "CF", faults: [["Not running", "PWR"], ["Wobbling or noisy", "NOI"], ["Speed control fault", "SPD"], ["Light not working", "LGT"]] },
+    "Mixer grinder": { code: "MG", faults: [["Motor not running", "MOT"], ["Burning smell", "SPK"], ["Jar leaking", "LEK"], ["Switch not working", "SWC"]] },
+    "Iron": { code: "IR", faults: [["Not heating", "HTG"], ["Leaking water or steam", "LEK"], ["Cord or plug fault", "CRD"], ["Thermostat not working", "THM"]] },
+    "Vacuum cleaner": { code: "VC", faults: [["Weak suction", "SCT"], ["Not switching on", "PWR"], ["Noisy motor", "NOI"], ["Brush not turning", "BRS"]] },
+    "Chimney": { code: "CH", faults: [["Weak suction", "SCT"], ["Light not working", "LGT"], ["Noisy operation", "NOI"], ["Filter needs cleaning", "FLT"]] },
+    "Induction cooktop": { code: "IC", faults: [["Not heating", "HTG"], ["Error code on display", "ERR"], ["Cooktop not switching on", "PWR"], ["Fan noisy", "NOI"]] },
+    "Air purifier": { code: "AP", faults: [["Not switching on", "PWR"], ["Filter needs replacing", "FLT"], ["Sensor not working", "SNS"], ["Noisy fan", "NOI"]] },
+    "Inverter or UPS": { code: "UP", faults: [["No backup power", "PWR"], ["Battery not charging", "BAT"], ["Beeping alarm", "ALM"], ["Output voltage fault", "VLT"]] },
+    "Speaker or sound system": { code: "SP", faults: [["No sound", "SND"], ["Distortion", "DST"], ["One channel silent", "CHN"], ["Does not switch on", "PWR"]] },
+    "Laptop": { code: "LP", faults: [["Does not switch on", "PWR"], ["Overheating", "HOT"], ["Screen or display fault", "SCR"], ["Battery not charging", "BAT"]] },
+    "Printer": { code: "PR", faults: [["Paper jam", "JAM"], ["Print quality poor", "QLT"], ["Not connecting", "CON"], ["Ink or toner error", "INK"]] },
+    "Mobile phone": { code: "MP", faults: [["Does not switch on", "PWR"], ["Battery drains fast", "BAT"], ["Screen cracked or faulty", "SCR"], ["Charging port fault", "CHG"]] },
+    "Set-top box": { code: "ST", faults: [["No signal", "SIG"], ["Remote not working", "RMT"], ["Picture freezing", "FRZ"], ["Does not switch on", "PWR"]] }
+  };
+  // Example listings only. No provider has joined the network yet.
+  var SAMPLE_PROVIDERS = [
+    { name: "Sample Care Desk A", area: "Example listing, area not set", rating: "Rating: example 4.5" },
+    { name: "Sample Repair Hub B", area: "Example listing, area not set", rating: "Rating: example 4.2" },
+    { name: "Sample Home Technicians C", area: "Example listing, area not set", rating: "Rating: example 4.8" }
+  ];
+  function renderFix(p) {
+    var wrap = $("fixWrap");
+    wrap.classList.remove("hidden");
+    var cat = FAULT_CODES[p.type] || { code: "GN", faults: [["Other fault", "OTH"]] };
+    var sel = $("fxFault");
+    sel.innerHTML = "";
+    cat.faults.forEach(function (f) { var o = document.createElement("option"); o.value = f[1]; o.textContent = f[0]; sel.appendChild(o); });
+    sel.onchange = function () { showFixCode(p, cat); };
+    showFixCode(p, cat);
+    var list = $("fxJobs"); list.innerHTML = "";
+    var jobs = p.jobs || [];
+    if (!jobs.length) { var li0 = document.createElement("li"); li0.textContent = "No visits requested for this appliance yet."; list.appendChild(li0); }
+    jobs.slice().reverse().forEach(function (j) {
+      var li = document.createElement("li");
+      var head = document.createElement("span"); var b = document.createElement("b"); b.textContent = j.ref + "  "; head.appendChild(b); head.appendChild(document.createTextNode(j.status));
+      var detail = document.createElement("span"); detail.textContent = j.fault + "  |  " + j.provider + "  |  " + j.date; detail.style.opacity = ".85";
+      var nb = document.createElement("button"); nb.type = "button"; nb.className = "chip job-status";
+      nb.textContent = "Next: " + (STATUS_ORDER[Math.min(STATUS_ORDER.indexOf(j.status) + 1, STATUS_ORDER.length - 1)]);
+      nb.disabled = j.status === "Done";
+      nb.addEventListener("click", function () { j.status = STATUS_ORDER[Math.min(STATUS_ORDER.indexOf(j.status) + 1, STATUS_ORDER.length - 1)]; persist(); renderPassport(); });
+      li.appendChild(head); li.appendChild(detail); li.appendChild(nb); list.appendChild(li);
+    });
+  }
+  function showFixCode(p, cat) {
+    var faultCode = $("fxFault").value;
+    var faultLabel = $("fxFault").options[$("fxFault").selectedIndex].textContent;
+    var universal = cat.code + "-" + faultCode;
+    $("fxCode").textContent = "Universal fault code: " + universal + " (" + faultLabel + "). The same code is used by every shop.";
+    var box = $("fxProviders"); box.innerHTML = "";
+    SAMPLE_PROVIDERS.forEach(function (pr) {
+      var card = document.createElement("div"); card.className = "fx-card";
+      var txt = document.createElement("span"); txt.textContent = pr.name; var sm = document.createElement("small"); sm.textContent = pr.area + "  |  " + pr.rating; txt.appendChild(sm);
+      var btn = document.createElement("button"); btn.type = "button"; btn.className = "chip"; btn.textContent = "Request visit";
+      btn.addEventListener("click", function () { requestJob(p, universal, faultLabel, pr.name); });
+      card.appendChild(txt); card.appendChild(btn); box.appendChild(card);
+    });
+  }
+  var CHECK_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  function checkChar(text) { var sum = 0; for (var i = 0; i < text.length; i++) { sum += text.charCodeAt(i); } return CHECK_CHARS.charAt(sum % 36); }
+  function allRefs() { var refs = {}; store().forEach(function (x) { (x.jobs || []).forEach(function (j) { refs[j.ref] = true; }); }); return refs; }
+  function newRef(universal) {
+    var used = allRefs();
+    for (var t = 0; t < 50; t++) {
+      var body = (Math.random().toString(36).slice(2) + "0000").slice(0, 4).toUpperCase();
+      var ref = "TNR-" + universal + "-" + body + checkChar(universal + body);
+      if (!used[ref]) { return ref; }
+    }
+    return "TNR-" + universal + "-" + Date.now().toString(36).toUpperCase();
+  }
+  var STATUS_ORDER = ["Requested", "Confirmed", "In progress", "Done"];
+  var lastRef = "";
+  function requestJob(p, universal, faultLabel, provider) {
+    var ref = newRef(universal); lastRef = ref;
+    p.jobs = p.jobs || [];
+    p.jobs.push({ ref: ref, code: universal, fault: faultLabel, provider: provider, date: fmtDate(TODAY), status: "Requested" });
+    persist(); renderPassport();
+    $("fxMsg").textContent = "Visit requested. Job reference " + ref + ". Keep it to quote to the technician. Requests are saved on this device only in this prototype.";
+    $("fxCopy").hidden = false;
+  }
+  if (window.self !== window.top) { $("exportP").hidden = true; }
+  $("fxCopy").addEventListener("click", function () {
+    if (!lastRef) { return; }
+    var done = function () { $("fxMsg").textContent = "Copied " + lastRef + "."; };
+    try { navigator.clipboard.writeText(lastRef).then(done, function () { $("fxMsg").textContent = "Copy is blocked here. The reference is " + lastRef + "."; }); }
+    catch (e) { $("fxMsg").textContent = "Copy is blocked here. The reference is " + lastRef + "."; }
+  });
+  $("exportP").addEventListener("click", function () {
+    var p = state.passport; if (!p) { $("fxMsg").textContent = "Create a passport first."; return; }
+    var blob = new Blob([JSON.stringify(p, null, 2)], { type: "application/json" });
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "tenure-" + p.id + ".json";
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    $("fxMsg").textContent = "Passport file downloaded (" + a.download + ").";
+  });
+
+  // Code lookup: decodes a fault code (WM-DRN) or checks a job reference (TNR-WM-DRN-7K2Q9)
+  function lookupCode(raw) {
+    var code = raw.trim().toUpperCase();
+    if (!code) { return ""; }
+    var typeByCode = {}; Object.keys(FAULT_CODES).forEach(function (t) { typeByCode[FAULT_CODES[t].code] = t; });
+    if (code.indexOf("TNR-") === 0) {
+      var parts = code.split("-");
+      if (parts.length !== 4 || parts[3].length !== 5) { return "This does not look like a job reference. It should look like TNR-WM-DRN-7K2Q9."; }
+      var universal = parts[1] + "-" + parts[2], body = parts[3].slice(0, 4), check = parts[3].slice(4);
+      var ok = checkChar(universal + body) === check;
+      var found = null; store().forEach(function (x) { (x.jobs || []).forEach(function (j) { if (j.ref === code) { found = j; } }); });
+      var typeName = typeByCode[parts[1]] || "Unknown appliance";
+      var msg = "Check character " + (ok ? "matches" : "does not match, so the reference may have a typo") + ". ";
+      return msg + (found ? "Found on this device: " + found.fault + ", " + found.status + ", " + found.date + "." : "Not found on this device.");
+    }
+    var bits = code.split("-");
+    if (bits.length !== 2) { return "Enter a fault code like WM-DRN, or a job reference like TNR-WM-DRN-7K2Q9."; }
+    var type = typeByCode[bits[0]];
+    if (!type) { return "No appliance matches the code " + bits[0] + "."; }
+    var fault = FAULT_CODES[type].faults.filter(function (f) { return f[1] === bits[1]; })[0];
+    if (!fault) { return type + ": no fault matches " + bits[1] + "."; }
+    return type + ": " + fault[0] + ". Universal code " + code + ", the same at every shop.";
+  }
+  $("codeIn").addEventListener("input", function (e) { $("codeMsg").textContent = lookupCode(e.target.value); });
+
+  function persist() {
+    var list = store().filter(function (x) { return x.id !== state.passport.id; });
+    list.unshift(state.passport);
+    saveStore(list);
+  }
+
+  $("copySummary").addEventListener("click", function () {
+    var p = state.passport; if (!p) return;
+    var lines = [p.id + " | " + p.brand + " " + p.type + " | " + p.model, "Serial: " + p.serial, "Location: " + p.room, "Warranty: " + p.warrantyText, "Repairs: " + p.repairs.length];
+    p.repairs.forEach(function (r) { lines.push("  " + r.date + " - " + r.part + (r.note ? " (" + r.note + ")" : "")); });
+    var text = lines.join("\n");
+    navigator.clipboard.writeText(text).then(function () { $("pStatus").textContent = "Passport summary copied."; },
+      function () { $("pStatus").textContent = "Copy was refused by the browser. Select the summary text manually."; });
+  });
+  $("resetPassport").addEventListener("click", function () {
+    clearTimers();
+    state = { brand: "", type: "", photoOk: false, photoSrc: "", photoLabel: "", ai: null, passport: null, selectedFault: null };
+    markPressed(brandGrid, ""); markPressed(typeGrid, ""); state.geo = null; state.service = []; renderServices(); $("serviceWrap").classList.add("hidden"); $("detailsWrap").classList.add("hidden"); Array.prototype.forEach.call(document.querySelectorAll("#detailsWrap input, #detailsWrap select"), function (el) { el.value = ""; }); fillModelList();
+    $("brandSearch").value = ""; renderBrands("");
+    $("next1").disabled = true; $("next2").disabled = true;
+    $("preview").classList.add("hidden"); $("dropText").classList.remove("hidden"); $("photoMeta").textContent = "";
+    Array.prototype.forEach.call(exWrap.children, function (x) { x.setAttribute("aria-pressed", "false"); });
+    ["serialIn", "purchase", "nick", "address"].forEach(function (id) { $(id).value = ""; });
+    delivery.checked = false; validateDelivery(); $("warranty").value = "12"; updateWarranty();
+    $("create").textContent = "Create passport"; $("create").disabled = true;
+    $("p3").classList.remove("done"); $("p1").classList.remove("done"); $("p2").classList.remove("done");
+    $("pStatus").textContent = "";
+    renderPassport(); setStep(1);
+  });
+
+  // ---------- saved passports ----------
+  function renderSaved() {
+    var box = $("savedList"); box.innerHTML = "";
+    var q = ($("findQ").value || "").trim().toLowerCase();
+    var list = store().filter(function (x) { return !q || JSON.stringify(x).toLowerCase().indexOf(q) !== -1; });
+    if (!list.length) { var p = document.createElement("p"); p.className = "note"; p.style.margin = "0"; p.textContent = "No saved passports yet."; box.appendChild(p); return; }
+    list.forEach(function (x) {
+      var row = document.createElement("div"); row.className = "saved-item";
+      var t = document.createElement("div");
+      var strong = document.createElement("strong"); strong.textContent = (x.nickname || x.model) + " (" + x.id + ")";
+      var sub = document.createElement("span"); sub.textContent = x.brand + " " + x.type + " | " + x.repairs.length + " repair entries | " + currentLoc(x);
+      t.appendChild(strong); t.appendChild(document.createElement("br")); t.appendChild(sub);
+      var open = document.createElement("button"); open.type = "button"; open.className = "action ghost"; open.textContent = "Open";
+      open.addEventListener("click", function () {
+        state.passport = x; renderPassport();
+        $("pStatus").textContent = "Opened " + x.id + ".";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+      row.appendChild(t); row.appendChild(open); box.appendChild(row);
+    });
+  }
+
+  // ---------- fault examples ----------
+  var faultGrid = $("faultGrid");
+  var currentFilter = "all";
+  function renderFaults() {
+    faultGrid.innerHTML = "";
+    FAULTS.filter(function (f) { return currentFilter === "all" || f.group === currentFilter; }).forEach(function (f) {
+      var card = document.createElement("article"); card.className = "fault";
+      var img = document.createElement("img"); img.src = f.file; img.alt = f.alt; img.loading = "lazy";
+      var body = document.createElement("div"); body.className = "body";
+      var tag = document.createElement("span"); tag.className = "tag"; tag.textContent = f.appliance;
+      var p = document.createElement("p"); p.textContent = f.seen;
+      var btn = document.createElement("button"); btn.type = "button"; btn.textContent = "Start passport record";
+      btn.addEventListener("click", function () { showRecord(f); });
+      body.appendChild(tag); body.appendChild(p); body.appendChild(btn);
+      card.appendChild(img); card.appendChild(body); faultGrid.appendChild(card);
+    });
+  }
+  function showRecord(f) {
+    state.selectedFault = f;
+    $("rHint").classList.add("hidden");
+    $("rDl").classList.remove("hidden");
+    $("rAppliance").textContent = f.appliance;
+    $("rSeen").textContent = f.seen;
+    $("useRecord").disabled = !state.passport;
+  }
+  $("useRecord").addEventListener("click", function () {
+    var p = state.passport, f = state.selectedFault;
+    if (!p || !f) return;
+    p.repairs.push({ date: fmtDate(TODAY), part: "To be confirmed", cost: "", note: "Visible in photo: " + f.seen });
+    persist(); renderPassport(); renderSaved();
+    $("pStatus").textContent = "Record added from the fault photo. The technician should confirm the part and diagnosis.";
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-filter]"), function (b) {
+    b.addEventListener("click", function () {
+      currentFilter = b.dataset.filter;
+      Array.prototype.forEach.call(document.querySelectorAll("[data-filter]"), function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+      renderFaults();
+    });
+  });
+
+  // ---------- theme ----------
+  var themeBtn = $("themeToggle");
+  function currentDark() {
+    var attr = document.documentElement.getAttribute("data-theme");
+    if (attr) return attr === "dark";
+    return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  }
+  function syncTheme() { var dark = currentDark(); themeBtn.textContent = dark ? "Light mode" : "Dark mode"; themeBtn.setAttribute("aria-pressed", String(dark)); }
+  themeBtn.addEventListener("click", function () { document.documentElement.setAttribute("data-theme", currentDark() ? "light" : "dark"); syncTheme(); });
+  syncTheme();
+
+  // ---------- sign-in (demo: stores name and contact only, no password, no code) ----------
+  var AUTH_KEY = "rp-user-v1";
+  function getUser() { try { return JSON.parse(localStorage.getItem(AUTH_KEY) || "null"); } catch (e) { return null; } }
+  function setUser(u) { try { if (u) localStorage.setItem(AUTH_KEY, JSON.stringify(u)); else localStorage.removeItem(AUTH_KEY); return true; } catch (e) { return false; } }
+  function renderUser() {
+    var u = getUser();
+    $("whoami").textContent = u ? "Signed in as " + u.name : "Not signed in";
+    $("suOut").classList.toggle("hidden", !u);
+  }
+  function validContact(v, country) { return !phoneError(v, country || countryOf("IN")); }
+  $("signinBtn").addEventListener("click", function () {
+    var card = $("signinCard");
+    var open = card.classList.toggle("hidden") === false;
+    this.setAttribute("aria-expanded", String(open));
+    if (open) { var u = getUser(); if (u) { $("suName").value = u.name; $("suContact").value = u.contact; } $("suName").focus(); }
+  });
+  $("helpBtn").addEventListener("click", function () {
+    $("help").scrollIntoView({ behavior: "smooth", block: "start" });
+    $("chatInput").focus({ preventScroll: true });
+  });
+  // Verification methods. Demo only: the code is fixed, nothing is sent, and passwords are not checked.
+  var DEMO_CODE = "482913";
+  var auth = { pending: null, tries: 0, wait: 0, timer: null };
+  function checkName() {
+    var n = $("suName").value.trim(), bad = n.length < 2;
+    setErr("errName", bad ? "Enter your name (at least 2 characters)." : "");
+    markInvalid($("suName"), bad);
+    return bad ? null : n;
+  }
+  function checkIdentifier(kind) {
+    var v = $("suContact").value.trim(), err;
+    var isEmail = v.indexOf("@") >= 0;
+    if (kind === "email" || (kind === "any" && isEmail)) err = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? "" : "Enter a valid email address.";
+    else if (!v) err = "Enter a mobile number or email.";
+    else err = phoneError(v, countryOf($("suCountry").value));
+    setErr("errContact", err);
+    markInvalid($("suContact"), !!err);
+    return err ? null : v;
+  }
+  function startWait(sec) {
+    clearTimeout(auth.timer); auth.wait = sec;
+    (function tick() {
+      $("suResend").disabled = auth.wait > 0;
+      $("suResend").textContent = auth.wait > 0 ? "Resend in " + auth.wait + "s" : "Resend code";
+      if (auth.wait > 0) { auth.wait--; auth.timer = setTimeout(tick, 1000); }
+    })();
+  }
+  function showCode(label, hint, pending) {
+    auth.pending = pending; auth.tries = 0;
+    $("codeLbl").textContent = label;
+    $("codeHint").textContent = hint;
+    $("codeWrap").classList.remove("hidden");
+    $("suCode").value = ""; setErr("errCode", "");
+    startWait(30);
+    $("suCode").focus();
+  }
+  function hideCode() {
+    auth.pending = null; auth.tries = 0;
+    clearTimeout(auth.timer);
+    $("codeWrap").classList.add("hidden");
+    $("suCode").value = ""; setErr("errCode", "");
+  }
+  function finishSignIn(name, contact) {
+    var country = countryOf($("suCountry").value);
+    var ok = setUser({ name: name, country: country.code, contact: contact, at: fmtDate(TODAY) });
+    renderUser();
+    hideCode();
+    $("suStatus").textContent = ok ? "Signed in on this device." : "Signed in for this page only. Saving is unavailable in this browser.";
+  }
+  function setMethod(m) {
+    hideCode();
+    document.querySelectorAll(".authtab").forEach(function (t) { var on = t.dataset.m === m; t.setAttribute("aria-selected", String(on)); t.tabIndex = on ? 0 : -1; });
+    document.querySelectorAll(".authpanel").forEach(function (p) { p.classList.toggle("hidden", p.dataset.panel !== m); });
+    $("suStatus").textContent = "";
+  }
+  Array.prototype.forEach.call(document.querySelectorAll(".authtab"), function (t) {
+    t.addEventListener("click", function () { setMethod(t.dataset.m); });
+  });
+  $("suSendOtp").addEventListener("click", function () {
+    var name = checkName(), c = checkIdentifier("phone");
+    if (!name || !c) return;
+    showCode("Enter the 6-digit code sent to your phone", "Demo code: " + DEMO_CODE + ". Nothing is really sent.", { name: name, contact: c });
+    $("suStatus").textContent = "Code sent (demo).";
+  });
+  $("suSendEmail").addEventListener("click", function () {
+    var name = checkName(), c = checkIdentifier("email");
+    if (!name || !c) return;
+    showCode("Enter the 6-digit code sent to your email", "Demo code: " + DEMO_CODE + ". Nothing is really sent.", { name: name, contact: c });
+    $("suStatus").textContent = "Code sent (demo).";
+  });
+  $("suShow").addEventListener("click", function () {
+    var i = $("suPass"), show = i.type === "password";
+    i.type = show ? "text" : "password";
+    this.textContent = show ? "Hide" : "Show";
+    this.setAttribute("aria-pressed", String(show));
+  });
+  $("suPassGo").addEventListener("click", function () {
+    var name = checkName(), c = checkIdentifier("any"), p = $("suPass").value;
+    var perr = p.length < 8 ? "Password must be at least 8 characters." : "";
+    setErr("errPass", perr); markInvalid($("suPass"), !!perr);
+    if (!name || !c || perr) return;
+    showCode("Second step: enter the code sent to your phone or email", "Demo code: " + DEMO_CODE + ". The password was not checked.", { name: name, contact: c });
+    $("suStatus").textContent = "Password entered. Enter the second-step code to finish.";
+  });
+  $("suPasskey").addEventListener("click", function () {
+    var name = checkName(), c = checkIdentifier("any");
+    if (!name || !c) return;
+    var b = this;
+    b.disabled = true; $("suStatus").textContent = "Waiting for your fingerprint or face (demo)...";
+    setTimeout(function () { b.disabled = false; finishSignIn(name, c); }, 1200);
+  });
+  $("suVerify").addEventListener("click", function () {
+    if (!auth.pending) return;
+    if ($("suCode").value.trim() === DEMO_CODE) { finishSignIn(auth.pending.name, auth.pending.contact); return; }
+    auth.tries++;
+    if (auth.tries >= 3) { hideCode(); setErr("errCode", ""); $("suStatus").textContent = "Too many wrong codes. Request a new one."; return; }
+    setErr("errCode", "That code is not right. " + (3 - auth.tries) + " tries left.");
+  });
+  $("suResend").addEventListener("click", function () {
+    if (!auth.pending) return;
+    auth.tries = 0; setErr("errCode", ""); startWait(30);
+    $("suStatus").textContent = "New demo code sent.";
+  });
+  $("suCancelCode").addEventListener("click", function () { hideCode(); $("suStatus").textContent = "Code cancelled."; });
+  setMethod("otp");
+  $("suGuest").addEventListener("click", function () {
+    setUser(null); renderUser();
+    $("suStatus").textContent = "Continuing as guest. Passports are still saved on this device.";
+  });
+  $("suOut").addEventListener("click", function () {
+    setUser(null); renderUser();
+    $("suName").value = ""; $("suContact").value = ""; $("suPass").value = ""; hideCode();
+    $("suStatus").textContent = "Signed out.";
+  });
+
+  // ---------- help: support numbers and a help assistant ----------
+  // Copy buttons: clipboard writes happen inside the click handler, with a fallback message.
+  Array.prototype.forEach.call(document.querySelectorAll("[data-copy]"), function (b) {
+    b.addEventListener("click", function () {
+      var num = b.dataset.copy;
+      function fallback() { $("copyMsg").textContent = "Number: " + num + " (select it to copy)."; }
+      try {
+        navigator.clipboard.writeText(num).then(function () { $("copyMsg").textContent = "Copied " + num + "."; }, fallback);
+      } catch (e) { fallback(); }
+    });
+  });
+
+  // Help library. The assistant only answers from these entries; anything else gets the support lines.
+  var HELP = [
+    { k: ["photo", "picture", "camera", "image"], a: "Photos must be at least 600 px wide and under 10 MB. Use Take photo for the camera, or drop, paste or choose a file." },
+    { k: ["warranty", "guarantee"], a: "Choose 0, 12, 24 or 36 months and enter the purchase date. The passport then shows whether the warranty is still active." },
+    { k: ["delivery", "pickup", "pick up", "home"], a: "Tick Home pickup and delivery, then enter the pickup address. An extra charge applies to cover local labour. The fee is to be confirmed by the team." },
+    { k: ["serial"], a: "The serial number is 6 to 14 letters, digits or hyphens. It is usually printed on a label on the back or side of the appliance." },
+    { k: ["recurring", "again", "repeat", "twice"], a: "If the same part is logged twice within 365 days, the passport shows a recurring flag for that part, with a suggestion for a root-cause check." },
+    { k: ["sign in", "signin", "login", "log in", "account", "sign out"], a: "Use Sign in at the top. Choose mobile code, email code, password, or fingerprint or face. This is a demo: codes are fixed, nothing is sent, and passwords are not checked." },
+    { k: ["saved", "lost", "delete", "clear", "where is my passport"], a: "Passports are saved in this browser only. Clearing site data removes them. Shared storage across devices needs a backend, which this app does not have." },
+    { k: ["fee", "price", "cost", "charge", "how much"], a: "No prices are set in the app. The delivery fee and repair prices are to be confirmed by the team." },
+    { k: ["model", "wrong", "confidence", "ai"], a: "When the match confidence is below 80%, pick the correct model from the list before you create the passport." },
+    { k: ["country", "code", "dial", "prefix", "+91", "+1", "international"], a: "Choose the country first. Mobile numbers are checked against that country's length and starting-digit rules, and the support numbers are shown with +91 (India)." },
+    { k: ["location", "track", "tracking", "where", "find"], a: "Each passport has a location history. Add the place where the appliance is now and save it. Current location is shown on the passport. Live GPS needs a signed-in app with location permission, so places are recorded by hand." },
+    { k: ["fault", "broken", "crack", "damage"], a: "Pick an example in Fault examples to see the record a passport would start. A technician fills in the diagnosis and parts." },
+    { k: ["help", "support", "contact", "number", "call", "phone"], a: "You can call either support line shown above, or ask here. Tap Copy number to copy one." }
+  ];
+  function answerFor(q) {
+    var t = (" " + q.toLowerCase().replace(/[^a-z0-9 ]+/g, " ") + " ");
+    for (var i = 0; i < HELP.length; i++) {
+      for (var j = 0; j < HELP[i].k.length; j++) {
+        if (t.indexOf(" " + HELP[i].k[j]) !== -1 || t.indexOf(HELP[i].k[j] + " ") !== -1) return HELP[i].a;
+      }
+    }
+    return null;
+  }
+  function addMsg(who, text) {
+    var log = $("chatLog");
+    var d = document.createElement("div");
+    d.className = "msg " + who;
+    d.textContent = text;
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+  }
+  function ask(q) {
+    q = (q || "").trim();
+    if (!q) return;
+    addMsg("user", q);
+    var a = answerFor(q);
+    addMsg("bot", a || "I do not have an answer for that in the help library. Please call one of the support lines above. You can copy the number with the buttons.");
+  }
+  Array.prototype.forEach.call(document.querySelectorAll("[data-q]"), function (b) {
+    b.addEventListener("click", function () { ask(b.dataset.q); });
+  });
+  $("chatForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var v = $("chatInput").value;
+    $("chatInput").value = "";
+    ask(v);
+  });
+  addMsg("bot", "Hi. Ask about photos, warranty, delivery, repairs, saved passports or sign-in. For anything else, call a support line.");
+
+  // ---------- countries, phone rules and location tracking ----------
+  // Simplified national-number rules for the prototype. A production app should use a full phone-number library.
+  var COUNTRIES = [
+    { code: "IN", name: "India", dial: "+91", len: [10], first: /^[6-9]/, hint: "6, 7, 8 or 9" },
+    { code: "US", name: "United States", dial: "+1", len: [10], first: /^[2-9]/, hint: "2 to 9" },
+    { code: "GB", name: "United Kingdom", dial: "+44", len: [10], first: /^7/, hint: "7 (mobile)" },
+    { code: "AE", name: "United Arab Emirates", dial: "+971", len: [9], first: /^5/, hint: "5 (mobile)" },
+    { code: "AU", name: "Australia", dial: "+61", len: [9], first: /^4/, hint: "4 (mobile)" },
+    { code: "SG", name: "Singapore", dial: "+65", len: [8], first: /^[89]/, hint: "8 or 9" },
+    { code: "DE", name: "Germany", dial: "+49", len: [10, 11], first: /^1/, hint: "1 (mobile)" },
+    { code: "FR", name: "France", dial: "+33", len: [9], first: /^[67]/, hint: "6 or 7 (mobile)" }
+  ];
+  function countryOf(code) { for (var i = 0; i < COUNTRIES.length; i++) if (COUNTRIES[i].code === code) return COUNTRIES[i]; return COUNTRIES[0]; }
+  function phoneError(raw, country) {
+    var v = (raw || "").trim();
+    if (!v) return "Enter a mobile number or an email.";
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return "";
+    var digits = v.replace(/[\s-]/g, "");
+    var dialDigits = country.dial.slice(1);
+    if (digits.indexOf("+" + dialDigits) === 0) digits = digits.slice(dialDigits.length + 1);
+    if (!/^\d+$/.test(digits)) return "Use digits only, without the country code, or enter an email.";
+    if (country.len.indexOf(digits.length) === -1) return country.name + " numbers have " + country.len.join(" or ") + " digits after " + country.dial + ".";
+    if (!country.first.test(digits)) return "Mobile numbers in " + country.name + " start with " + country.hint + ".";
+    return "";
+  }
+  function currentLoc(p) {
+    var locs = (p && p.locations) || [];
+    if (!locs.length) return p && p.room ? p.room : "Not recorded";
+    var last = locs.slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; })[0];
+    var c = p.country ? " (" + countryOf(p.country).name + ")" : "";
+    return last.place + c + " · " + last.date;
+  }
+  function renderCountries() {
+    ["suCountry", "country"].forEach(function (id) {
+      var sel = $(id); sel.innerHTML = "";
+      COUNTRIES.forEach(function (c) {
+        var o = document.createElement("option"); o.value = c.code; o.textContent = c.name + " (" + c.dial + ")"; sel.appendChild(o);
+      });
+      sel.value = "IN";
+    });
+    $("suCountry").addEventListener("change", function () {
+      var c = countryOf(this.value);
+      $("suContact").placeholder = c.len.join(" or ") + "-digit mobile number, or email";
+      setErr("errContact", "");
+    });
+    $("suContact").placeholder = "10-digit mobile number, or email";
+  }
+  function renderLocations(p) {
+    var list = $("pLocs"); list.innerHTML = "";
+    var locs = (p.locations || []).slice().sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+    if (!locs.length) { var li0 = document.createElement("li"); li0.textContent = "No locations recorded yet."; list.appendChild(li0); }
+    locs.forEach(function (l) {
+      var li = document.createElement("li");
+      var head = document.createElement("span"); var b = document.createElement("b"); b.textContent = l.date + "  ";
+      head.appendChild(b); head.appendChild(document.createTextNode(l.type));
+      var detail = document.createElement("span"); detail.textContent = l.place + (l.geo ? "  |  GPS " + l.geo.lat + ", " + l.geo.lng : "");
+      if (l.country) detail.textContent += "  |  " + countryOf(l.country).name;
+      detail.style.opacity = ".85";
+      li.appendChild(head); li.appendChild(detail); list.appendChild(li);
+    });
+    $("pRoom").textContent = currentLoc(p);
+    $("locForm").classList.remove("hidden");
+  }
+  $("addLoc").addEventListener("click", function () {
+    var p = state.passport; if (!p) return;
+    var place = $("uLocPlace").value.trim();
+    var err = place.length < 3 ? "Enter the place or address (at least 3 characters)." : "";
+    $("errLoc").textContent = err;
+    if (err) return;
+    p.locations = p.locations || [];
+    p.locations.push({ date: fmtDate(TODAY), type: $("uLocType").value, place: place, country: p.country, geo: state.updGeo || null }); state.updGeo = null;
+    persist(); renderPassport(); renderSaved();
+    $("uLocPlace").value = "";
+    $("pStatus").textContent = "Location saved: " + place + ".";
+  });
+  // Shared GPS capture. It always gives feedback, times out, and returns null on failure.
+  function captureGeo(msgEl, done) {
+    if (!navigator.geolocation) { msgEl.textContent = "This browser has no location service. Type the place instead."; done(null); return; }
+    msgEl.textContent = "Getting your location. Allow it when the browser asks.";
+    var finished = false;
+    var slow = setTimeout(function () {
+      if (!finished) { msgEl.textContent = "Still waiting for the device to report a position. Check that device location is on, then try again, or type the place."; }
+    }, 10000);
+    function fail(err) {
+      finished = true; clearTimeout(slow);
+      var why = "Location is not available here. Type the place or address instead.";
+      if (err && err.code === 1) { why = "Location permission is off for this site. Allow it in the browser's site settings (the lock icon near the address), then try again."; }
+      else if (err && err.code === 2) { why = "The device could not find its position. Turn on device location and try again."; }
+      else if (err && err.code === 3) { why = "Finding your location took too long. Try again, or type the place."; }
+      msgEl.textContent = why; done(null);
+    }
+    try {
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        finished = true; clearTimeout(slow);
+        var g = { lat: pos.coords.latitude.toFixed(4), lng: pos.coords.longitude.toFixed(4), accuracy: Math.round(pos.coords.accuracy || 0) };
+        msgEl.textContent = "Location captured (" + g.lat + ", " + g.lng + ", within about " + g.accuracy + " m). The place box is filled in; change it if you like.";
+        done(g);
+      }, fail, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
+    } catch (e) { fail(null); }
+  }
+  $("useGeo").addEventListener("click", function () {
+    captureGeo($("geoMsg"), function (g) {
+      state.geo = g;
+      if (g) {
+        var f = $("locPlace");
+        if (!f.value.trim() || f.dataset.auto === "1") {
+          f.value = "Current location (" + g.lat + ", " + g.lng + ")";
+          f.dispatchEvent(new Event("input"));
+          f.dataset.auto = "1";
+        }
+      }
+    });
+  });
+  $("locPlace").addEventListener("input", function () { this.dataset.auto = "0"; });
+  $("useGeoUpd").addEventListener("click", function () {
+    captureGeo($("geoMsgUpd"), function (g) {
+      state.updGeo = g;
+      if (g && !$("uLocPlace").value.trim()) { $("uLocPlace").value = "Current location (" + g.lat + ", " + g.lng + ")"; }
+    });
+  });
+  $("findQ").addEventListener("input", function () { renderSaved(); });
+  renderCountries();
+
+  // ---------- dashboard: profile, appliances, transactions and offers ----------
+  var OFFERS = [
+    { id: "warranty", title: "Extended warranty plan", ic: "shield",
+      you: "Longer cover for an appliance that is still under warranty, or after it ends.",
+      partner: "Warranty provider (not yet signed)",
+      owner: "Referral fee per plan sold (to be agreed)" },
+    { id: "shop", title: "Partner repair shop discount", ic: "wrench",
+      you: "A discount on labour at shops that have joined the network, with their repair history shared with you.",
+      partner: "Partner repair shops (not yet signed)",
+      owner: "Booking fee from the shop for each job sent to it" },
+    { id: "pickup", title: "Pickup and delivery bundle", ic: "truck",
+      you: "Collection from home and return delivery, booked from the passport. The extra charge covers local labour.",
+      partner: "Local technicians (not yet signed)",
+      owner: "Delivery margin, which pays for local labour" },
+    { id: "care", title: "Maintenance reminders", ic: "calendar",
+      you: "Reminders for filter cleaning and service, based on the repair history, so fewer breakdowns happen.",
+      partner: "Service partners (not yet signed)",
+      owner: "Monthly plan fee once the reminder service is live (to be set)" },
+    { id: "resale", title: "Trade-in and resale check", ic: "passport",
+      you: "A valuation from the passport's repair history before you sell or replace an appliance.",
+      partner: "Resale and recycling partners (not yet signed)",
+      owner: "Referral fee for each completed trade-in" }
+  ];
+  function allPassports() { return store(); }
+  function monthsBetween(a, b) { return (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth()); }
+  function warrantyState(p) {
+    var d = parseDate(p.purchase);
+    if (!p.warranty || !d) return { active: false, text: "Not recorded" };
+    var end = addMonths(d, p.warranty);
+    return end >= TODAY ? { active: true, text: "Active to " + fmtDate(end) } : { active: false, text: "Ended " + fmtDate(end) };
+  }
+  function buildTx(list) {
+    var tx = [];
+    list.forEach(function (p) {
+      var name = p.nickname || p.model;
+      (p.repairs || []).forEach(function (r) {
+        tx.push({ date: r.date, kind: "repair", label: "Repair: " + r.part, appliance: name, amount: r.cost === "" ? "Not recorded" : String(r.cost), status: "Recorded" });
+      });
+      (p.locations || []).slice(1).forEach(function (l) {
+        tx.push({ date: l.date, kind: "location", label: "Moved to " + l.type, appliance: name, amount: "-", status: l.place });
+      });
+      if (p.delivery) tx.push({ date: p.created, kind: "delivery", label: "Home pickup and delivery requested", appliance: name, amount: "Fee to be confirmed", status: "Requested" });
+      (p.offers || []).forEach(function (o) {
+        tx.push({ date: o.date, kind: "offer", label: "Offer requested: " + o.title, appliance: name, amount: "To be confirmed", status: "Pending review" });
+      });
+    });
+    return tx.sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+  }
+  function cell(row, text, cls) { var td = document.createElement("td"); if (cls) td.className = cls; td.textContent = text; row.appendChild(td); return td; }
+  function headRow(table, names) {
+    var tr = document.createElement("tr");
+    names.forEach(function (n) { var th = document.createElement("th"); th.textContent = n; tr.appendChild(th); });
+    table.appendChild(tr);
+  }
+  // ---------- dashboard: scopes and insights ----------
+  var dashScope = { k: "all", v: "" };
+  function attentionReasons(p) {
+    var r = [];
+    var flags = recurringFlags(p.repairs || []);
+    if (flags.length) r.push("Recurring fault: " + flags.join(", "));
+    var d = parseDate(p.purchase);
+    if (p.warranty && d) {
+      var days = daysBetween(TODAY, addMonths(d, p.warranty));
+      if (days >= 0 && days <= 60) r.push("Warranty ends in " + days + " days");
+    }
+    return r;
+  }
+  function inScope(p) {
+    if (dashScope.k === "type") return p.type === dashScope.v;
+    if (dashScope.k === "room") return p.room === dashScope.v;
+    if (dashScope.k === "warranty") return warrantyState(p).active;
+    if (dashScope.k === "attention") return attentionReasons(p).length > 0;
+    return true;
+  }
+  function renderScopes(all) {
+    var box = $("dashScopes"); box.innerHTML = "";
+    var chips = [["all", "", "All"], ["warranty", "", "Warranty active"], ["attention", "", "Needs attention"]];
+    var types = [], rooms = [];
+    all.forEach(function (p) { if (p.type && types.indexOf(p.type) < 0) types.push(p.type); if (p.room && rooms.indexOf(p.room) < 0) rooms.push(p.room); });
+    types.forEach(function (t) { chips.push(["type", t, t]); });
+    rooms.forEach(function (r) { chips.push(["room", r, "Room: " + r]); });
+    chips.forEach(function (c) {
+      var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = c[2];
+      var on = dashScope.k === c[0] && dashScope.v === c[1];
+      b.setAttribute("aria-pressed", String(on));
+      b.addEventListener("click", function () { dashScope = { k: c[0], v: c[1] }; renderDashboard(); });
+      box.appendChild(b);
+    });
+  }
+  function insightCard(title) {
+    var card = document.createElement("div"); card.className = "ins";
+    var h = document.createElement("h4"); h.textContent = title; card.appendChild(h);
+    return card;
+  }
+  function renderInsights(list) {
+    var box = $("dInsights"); box.innerHTML = "";
+    if (!list.length) { var e = document.createElement("p"); e.className = "note"; e.textContent = "Insights appear here once an appliance is on the dashboard."; box.appendChild(e); return; }
+
+    // 1. Spend by month, last six months
+    var months = [];
+    for (var i = 5; i >= 0; i--) { var d = new Date(TODAY.getFullYear(), TODAY.getMonth() - i, 1); months.push({ key: d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"), label: d.toLocaleString("en", { month: "short" }), sum: 0 }); }
+    list.forEach(function (p) { (p.repairs || []).forEach(function (r) { var m = months.filter(function (x) { return x.key === String(r.date || "").slice(0, 7); })[0]; if (m && r.cost !== "") m.sum += Number(r.cost) || 0; }); });
+    var max = Math.max.apply(null, months.map(function (m) { return m.sum; }).concat([1]));
+    var c1 = insightCard("Repair spend, last 6 months");
+    var chart = document.createElement("div"); chart.className = "cols-chart";
+    months.forEach(function (m) {
+      var col = document.createElement("div"); col.className = "c";
+      var bar = document.createElement("i"); bar.style.height = Math.max(2, Math.round((m.sum / max) * 100)) + "%"; bar.title = m.label + ": " + m.sum.toLocaleString();
+      var lab = document.createElement("span"); lab.textContent = m.label;
+      col.appendChild(bar); col.appendChild(lab); chart.appendChild(col);
+    });
+    c1.appendChild(chart);
+    var total6 = months.reduce(function (a, m) { return a + m.sum; }, 0);
+    var t1 = document.createElement("p"); t1.className = "note"; t1.style.margin = "0"; t1.textContent = total6 ? "Total in these months: " + total6.toLocaleString() + " (recorded costs only)." : "No costs recorded in these months yet.";
+    c1.appendChild(t1);
+    box.appendChild(c1);
+
+    // 2. Repairs by part
+    var parts = {};
+    list.forEach(function (p) { (p.repairs || []).forEach(function (r) { parts[r.part] = (parts[r.part] || 0) + 1; }); });
+    var keys = Object.keys(parts).sort(function (a, b) { return parts[b] - parts[a]; });
+    var c2 = insightCard("Repairs by part");
+    if (!keys.length) { var n2 = document.createElement("p"); n2.className = "note"; n2.style.margin = "0"; n2.textContent = "No repair entries yet."; c2.appendChild(n2); }
+    var pmax = keys.length ? parts[keys[0]] : 1;
+    keys.slice(0, 6).forEach(function (k) {
+      var row = document.createElement("div"); row.className = "hbar";
+      var l = document.createElement("span"); l.textContent = k;
+      var track = document.createElement("div"); track.className = "track"; var fill = document.createElement("i"); fill.style.width = Math.round((parts[k] / pmax) * 100) + "%"; track.appendChild(fill);
+      var v = document.createElement("span"); v.textContent = String(parts[k]);
+      row.appendChild(l); row.appendChild(track); row.appendChild(v); c2.appendChild(row);
+    });
+    box.appendChild(c2);
+
+    // 3. Warranty timeline
+    var c3 = insightCard("Warranty timeline");
+    var any = false;
+    list.forEach(function (p) {
+      var d = parseDate(p.purchase);
+      if (!p.warranty || !d) return;
+      any = true;
+      var end = addMonths(d, p.warranty);
+      var total = Math.max(1, daysBetween(d, end)), used = Math.min(total, Math.max(0, daysBetween(d, TODAY)));
+      var left = daysBetween(TODAY, end);
+      var row = document.createElement("div"); row.style.display = "grid"; row.style.gap = "4px";
+      var t = document.createElement("span"); t.style.fontSize = "13px"; t.textContent = (p.nickname || p.model) + " · " + (left >= 0 ? left + " days left" : "ended " + fmtDate(end));
+      var prog = document.createElement("div"); prog.className = "prog"; var pi = document.createElement("i"); pi.style.width = Math.round((used / total) * 100) + "%"; if (left < 0) pi.style.background = "var(--bad)"; else if (left <= 60) pi.style.background = "var(--warn)"; prog.appendChild(pi);
+      row.appendChild(t); row.appendChild(prog); c3.appendChild(row);
+    });
+    if (!any) { var n3 = document.createElement("p"); n3.className = "note"; n3.style.margin = "0"; n3.textContent = "No warranty dates recorded."; c3.appendChild(n3); }
+    box.appendChild(c3);
+
+    // 4. Needs attention
+    var c4 = insightCard("Needs attention");
+    var items = 0;
+    list.forEach(function (p) {
+      attentionReasons(p).forEach(function (reason) {
+        items++;
+        var line = document.createElement("p"); line.style.margin = "0"; line.style.fontSize = "13px";
+        var b = document.createElement("b"); b.textContent = (p.nickname || p.model) + ": "; line.appendChild(b); line.appendChild(document.createTextNode(reason)); c4.appendChild(line);
+      });
+    });
+    if (!items) { var n4 = document.createElement("p"); n4.className = "note"; n4.style.margin = "0"; n4.textContent = "Nothing needs attention right now."; c4.appendChild(n4); }
+    box.appendChild(c4);
+  }
+  function renderDashboard() {
+    var all = allPassports();
+    var pick = $("dashPick");
+    var keep = pick.value;
+    pick.innerHTML = "";
+    var allOpt = document.createElement("option"); allOpt.value = "*"; allOpt.textContent = "All appliances on this device"; pick.appendChild(allOpt);
+    all.forEach(function (p) { var o = document.createElement("option"); o.value = p.id; o.textContent = (p.nickname || p.model) + " (" + p.id + ")"; pick.appendChild(o); });
+    pick.value = (keep && (keep === "*" || all.some(function (p) { return p.id === keep; }))) ? keep : "*";
+    var list = pick.value === "*" ? all : all.filter(function (p) { return p.id === pick.value; });
+    renderScopes(all);
+    list = list.filter(inScope);
+
+    var u = getUser();
+    $("dashWho").textContent = u ? "Profile: " + u.name + " · " + countryOf(u.country || "IN").name + " · " + u.contact.replace(/^(.{0,4}).*(.{2})$/, "$1…$2") : "Profile: guest. Sign in to add your name and contact.";
+
+    var repairs = 0, spend = 0, flags = 0, active = 0, offersN = 0, unknown = 0;
+    list.forEach(function (p) {
+      repairs += (p.repairs || []).length;
+      (p.repairs || []).forEach(function (r) { if (r.cost === "") unknown++; else spend += Number(r.cost) || 0; });
+      flags += recurringFlags(p.repairs || []).length;
+      if (warrantyState(p).active) active++;
+      offersN += (p.offers || []).length;
+    });
+    var kpis = [[list.length, "Appliances"], [repairs, "Repair entries"], [spend.toLocaleString(), "Total repair cost (recorded)"], [flags, "Recurring faults flagged"], [active, "Warranties active"], [offersN, "Offers requested"]];
+    var k = $("kpis"); k.innerHTML = "";
+    kpis.forEach(function (x) { var d = document.createElement("div"); d.className = "kpi"; var b = document.createElement("b"); b.textContent = String(x[0]); var sp = document.createElement("span"); sp.textContent = x[1]; d.appendChild(b); d.appendChild(sp); k.appendChild(d); });
+    if (unknown) { var note = document.createElement("span"); note.className = "note"; note.style.gridColumn = "1 / -1"; note.textContent = unknown + " repair entr" + (unknown === 1 ? "y has" : "ies have") + " no cost recorded and are not in the total."; k.appendChild(note); }
+
+    var app = $("dApp"); app.innerHTML = "";
+    headRow(app, ["Appliance", "Type", "Where now", "Warranty", "Repairs", "Cost (recorded)", "Flags"]);
+    if (!list.length) { var tr0 = document.createElement("tr"); var td0 = cell(tr0, "No appliances yet. Create a passport to see it here.", "empty-cell"); td0.colSpan = 7; app.appendChild(tr0); }
+    list.forEach(function (p) {
+      var tr = document.createElement("tr");
+      cell(tr, p.nickname || p.model);
+      cell(tr, p.type + " · " + p.brand);
+      cell(tr, currentLoc(p));
+      cell(tr, warrantyState(p).text);
+      cell(tr, String((p.repairs || []).length), "num");
+      var c = 0; (p.repairs || []).forEach(function (r) { c += Number(r.cost) || 0; });
+      cell(tr, c.toLocaleString(), "num");
+      cell(tr, recurringFlags(p.repairs || []).join(", ") || "None");
+      app.appendChild(tr);
+    });
+
+    renderInsights(list);
+    renderTx(list);
+    renderOffers(list, pick.value);
+    var who = $("dashWho"); if (!u) who.textContent = "Profile: guest. Sign in to add your name and contact.";
+  }
+  var txKind = "all";
+  function renderTx(list) {
+    var tx = buildTx(list).filter(function (t) { return txKind === "all" || t.kind === txKind; });
+    var f = $("txFilters"); f.innerHTML = "";
+    [["all", "All"], ["repair", "Repairs"], ["delivery", "Delivery"], ["offer", "Offers"], ["location", "Moves"]].forEach(function (x) {
+      var b = document.createElement("button"); b.type = "button"; b.className = "chip"; b.textContent = x[1];
+      b.setAttribute("aria-pressed", String(txKind === x[0]));
+      b.addEventListener("click", function () { txKind = x[0]; renderTx(list); });
+      f.appendChild(b);
+    });
+    var t = $("dTx"); t.innerHTML = "";
+    headRow(t, ["Date", "Activity", "Appliance", "Amount", "Status"]);
+    if (!tx.length) { var tr0 = document.createElement("tr"); var td0 = cell(tr0, "No activity in this view yet.", "empty-cell"); td0.colSpan = 5; t.appendChild(tr0); }
+    tx.forEach(function (x) {
+      var tr = document.createElement("tr");
+      cell(tr, x.date); cell(tr, x.label); cell(tr, x.appliance); cell(tr, x.amount, "num"); cell(tr, x.status);
+      t.appendChild(tr);
+    });
+  }
+  function renderOffers(list, pickValue) {
+    var box = $("offers"); box.innerHTML = "";
+    var scope = pickValue === "*" ? allPassports() : list;
+    OFFERS.forEach(function (o) {
+      var card = document.createElement("article"); card.className = "offer";
+      var h = document.createElement("h4");
+      var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      svg.setAttribute("class", "ic"); svg.setAttribute("aria-hidden", "true");
+      var use = document.createElementNS("http://www.w3.org/2000/svg", "use"); use.setAttribute("href", "#i-" + o.ic);
+      svg.appendChild(use); h.appendChild(svg); h.appendChild(document.createTextNode(o.title));
+      var p = document.createElement("p"); p.textContent = o.you;
+      var who = document.createElement("div"); who.className = "who";
+      [["You get: ", o.you.split(".")[0]], ["Partner: ", o.partner], ["Project earns: ", o.owner]].forEach(function (x) {
+        var line = document.createElement("span"); var b = document.createElement("b"); b.textContent = x[0]; line.appendChild(b); line.appendChild(document.createTextNode(x[1])); who.appendChild(line);
+      });
+      var hasOffer = function (x) { return (x.offers || []).some(function (q) { return q.offerId === o.id; }); };
+      var already = scope.length > 0 && scope.every(hasOffer);
+      var btn = document.createElement("button"); btn.type = "button"; btn.className = "action";
+      btn.textContent = already ? "Requested" : "Request this offer";
+      btn.disabled = !!already;
+      btn.addEventListener("click", function () {
+        var sel = $("dashPick").value;
+        var all = allPassports();
+        var targets = sel === "*" ? all : all.filter(function (x) { return x.id === sel; });
+        if (!targets.length) { $("offerMsg").textContent = "Add an appliance first, then request an offer for it."; return; }
+        var named = [];
+        targets.forEach(function (t) {
+          if (hasOffer(t)) return;
+          t.offers = t.offers || [];
+          t.offers.push({ offerId: o.id, title: o.title, date: fmtDate(TODAY) });
+          named.push(t.nickname || t.model);
+        });
+        if (!named.length) { $("offerMsg").textContent = "You have already requested " + o.title + " for these appliances."; return; }
+        var ids = targets.map(function (t) { return t.id; });
+        var merged = all.map(function (x) { return ids.indexOf(x.id) >= 0 ? targets.filter(function (t) { return t.id === x.id; })[0] : x; });
+        saveStore(merged);
+        if (state.passport && ids.indexOf(state.passport.id) >= 0) state.passport = merged.filter(function (x) { return x.id === state.passport.id; })[0];
+        renderPassport(); renderDashboard(); renderSaved();
+        $("offerMsg").textContent = "Requested: " + o.title + " for " + named.join(", ") + ". A team member will confirm the terms.";
+      });
+      card.appendChild(h); card.appendChild(p); card.appendChild(who); card.appendChild(btn);
+      box.appendChild(card);
+    });
+  }
+  $("dashPick").addEventListener("change", function () { renderDashboard(); });
+  $("dashBtn").addEventListener("click", function () {
+    renderDashboard();
+    $("dash").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  // ---------- init ----------
+  renderFaults();
+  renderSaved();
+  renderPassport();
+  validateDelivery();
+  renderUser();
+  renderDashboard();
+})();
+</script>
+</body>
+</html>
+
+</body></html>
